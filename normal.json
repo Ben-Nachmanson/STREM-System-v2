@@ -1,0 +1,27 @@
+{"stages":[
+    {
+        "stage": 1,
+        "effluent":400
+    },
+    {
+        "stage": 2,
+        "influent":300
+    },
+    {
+        "stage": 3,
+        "n2":100
+    },
+    {
+        "stage": 4,
+        "still":1300
+    },
+    {
+        "stage": 5,
+        "air":5700
+    },
+    {
+        "stage":6,
+        "still":600
+    }    
+]
+}
