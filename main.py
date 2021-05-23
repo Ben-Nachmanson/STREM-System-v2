@@ -1,5 +1,5 @@
-import json
 import time
+from PyQt5 import QtCore, QtGui
 from timeit import default_timer as timer
 # import Hardware
 
@@ -7,30 +7,37 @@ from timeit import default_timer as timer
     Sequential Batch Reactor, 8 channel relay, anaerobic fermenter = coupled
 
 """
-# Default Starting dictionary.
+global State
+# Default starting stages
 stages = [{
     "stage": 1,
-    "effluent": 400
+    "stage mode": "effluent",
+    "time": 400
 },
     {
     "stage": 2,
-    "influent": 300
+    "stage mode": "influent",
+    "time": 300
 },
     {
     "stage": 3,
-    "n2": 100
+    "stage mode": "n2",
+    "time": 100
 },
     {
     "stage": 4,
-    "still": 1300
+    "stage mode": "still",
+    "time": 1300
 },
     {
     "stage": 5,
-    "air": 5700
+    "stage mode": "air",
+    "time": 5700
 },
     {
     "stage": 6,
-    "still": 600
+    "stage mode": "still",
+    "time": 600
 }]
 
 # Relay1
@@ -75,26 +82,28 @@ def fermN2(secondsDuration):
 
 
 def stepper(secondsDuration, inOut):
-
-    start = timer()
+    start = QtCore.QTimer
 
     print("Stepper duration", secondsDuration,
           " direction ", inOut, " starting time:", start)
 
     if inOut == "in":
         # StepPins = Stepper1Pins
+
         pass
     elif inOut == "out":
         # StepPins = Stepper2Pins
+
         pass
     else:
        # StepPins = Stepper3Pins
+
         pass
 
     # Variable Declarations.
     StepCount = len(Seq)
     StepDir = 1  # Set to 1  for clockwise, -1  for anti-clockwise
-    WaitTime = 10
+    waitTime = 10
     StepCounter = 0
 
     while True:
@@ -117,7 +126,7 @@ def stepper(secondsDuration, inOut):
         if (StepCounter < 0):
             StepCounter = StepCount+StepDir
 
-        time.sleep(WaitTime)
+        start.start(waitTime)
         # find how long it has been running
         end = timer()
         timeRunningSeconds = end - start
@@ -142,17 +151,17 @@ def runCycle():
     for step in stages:
         print("stage:", step["stage"])
 
-        if "n2" in step.keys():
-            n2(step["n2"])
+        if step["stage mode"] == "n2":
+            n2(step["time"])
 
-        elif "air" in step.keys():
-            air(step["air"])
+        elif step["stage mode"] == "air":
+            air(step["time"])
 
-        elif "fermN2" in step.keys():
-            fermN2(step["fermN2"])
+        elif step["stage mode"] == "fermN2":
+            fermN2(step["time"])
 
-        elif "influent" in step.keys():
-            stepper(step["influent"], "in")
+        elif step["stage mode"] == "influent":
+            stepper(step["time"], "in")
 
             # turn off
             for pin in range(0, 1):
@@ -160,11 +169,11 @@ def runCycle():
                 # xpin.off()
                 pass
 
-        elif "still" in step.keys():
-            still(step["still"])
+        elif step["stage mode"] == "still":
+            still(step["time"])
 
-        elif "effluent" in step.keys():
-            stepper(step["effluent"], "out")
+        elif step["stage mode"] == "effluent":
+            stepper(step["time"], "out")
 
             # turn off
             for pin in range(0, 1):
@@ -172,8 +181,9 @@ def runCycle():
                 # xpin.off()
                 pass
 
-        elif "fermenter" in step.keys():
-            #stepper(step["fermenter"], None)
+        elif step["stage mode"] == "fermenter":
+            stepper(step["time"], None)
+
             # turn off
             for pin in range(0, 1):
                 # xpin = Stepper3Pins[pin]
@@ -182,9 +192,3 @@ def runCycle():
 
         else:
             print("error", print(step))
-
-
-if __name__ == '__main__':
-
-    while True:
-        runCycle()
