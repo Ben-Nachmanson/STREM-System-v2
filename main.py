@@ -1,6 +1,6 @@
 import time
-from PyQt5 import QtCore, QtGui
 from timeit import default_timer as timer
+import threading
 # import Hardware
 
 """
@@ -11,7 +11,7 @@ global State
 # Default starting stages
 stages = [{
     "stage": 1,
-    "stage mode": "effluent",
+    "stage mode": "n2",
     "time": 400
 },
     {
@@ -60,10 +60,25 @@ Seq = [[1, 0]]
 # Define pin functions
 
 
+def SleepHandler(secondsDuration):
+    startTime = time.time()
+
+    while True:
+        currentTime = time.time()
+        elapsedTime = currentTime - startTime
+        print()
+
+        if elapsedTime > secondsDuration:
+            print("Time Cycle Done in: " + str(int(elapsedTime)+" seconds"))
+            break
+
+    print("Finished sleep cycle.")
+
+
 def n2(secondsDuration):
     print("N2 turned on for ", secondsDuration)
     # RELAY_12.on()
-    time.sleep(secondsDuration)
+    SleepHandler(secondsDuration)
     # RELAY_12.off()
 
 
@@ -82,7 +97,7 @@ def fermN2(secondsDuration):
 
 
 def stepper(secondsDuration, inOut):
-    start = QtCore.QTimer
+    start = timer()
 
     print("Stepper duration", secondsDuration,
           " direction ", inOut, " starting time:", start)
@@ -126,7 +141,7 @@ def stepper(secondsDuration, inOut):
         if (StepCounter < 0):
             StepCounter = StepCount+StepDir
 
-        start.start(waitTime)
+        time.sleep(waitTime)
         # find how long it has been running
         end = timer()
         timeRunningSeconds = end - start

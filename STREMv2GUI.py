@@ -24,6 +24,7 @@ def killCycle():
 
 
 class Ui_MainWindow(object):
+    # UI naming and positioning
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(890, 516)
@@ -39,12 +40,12 @@ class Ui_MainWindow(object):
         self.phLabel.setFont(font)
         self.phLabel.setObjectName("phLabel")
         self.gridLayout.addWidget(self.phLabel, 1, 2, 1, 1)
-        self.CycleCountDownLabel = QtWidgets.QLabel(self.centralwidget)
+        self.timerLabel = QtWidgets.QLabel(self.centralwidget)
         font = QtGui.QFont()
         font.setPointSize(28)
-        self.CycleCountDownLabel.setFont(font)
-        self.CycleCountDownLabel.setObjectName("CycleCountDownLabel")
-        self.gridLayout.addWidget(self.CycleCountDownLabel, 3, 2, 1, 4)
+        self.timerLabel.setFont(font)
+        self.timerLabel.setObjectName("timerLabel")
+        self.gridLayout.addWidget(self.timerLabel, 3, 2, 1, 4)
         self.orpTextBrowser = QtWidgets.QTextBrowser(self.centralwidget)
         font = QtGui.QFont()
         font.setPointSize(44)
@@ -82,7 +83,7 @@ class Ui_MainWindow(object):
         self.tableWidget.setRowCount(65)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(0, item)
-        #self.tableWidget.setItem(1, 2, QtWidgets.QTableWidgetItem(str(40)))
+        # self.tableWidget.setItem(1, 2, QtWidgets.QTableWidgetItem(str(40)))
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(1, item)
         item = QtWidgets.QTableWidgetItem()
@@ -259,9 +260,9 @@ class Ui_MainWindow(object):
         self.PauseButton = QtWidgets.QPushButton(self.centralwidget)
         self.PauseButton.setObjectName("PauseButton")
         self.gridLayout.addWidget(self.PauseButton, 5, 4, 1, 2)
-        self.killCycleButton = QtWidgets.QPushButton(self.centralwidget)
-        self.killCycleButton.setObjectName("killCycleButton")
-        self.gridLayout.addWidget(self.killCycleButton, 6, 2, 1, 1)
+        self.reset = QtWidgets.QPushButton(self.centralwidget)
+        self.reset.setObjectName("reset")
+        self.gridLayout.addWidget(self.reset, 6, 2, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 890, 22))
@@ -283,12 +284,13 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    # Setting text and naming
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.phLabel.setText(_translate("MainWindow", "pH "))
-        self.CycleCountDownLabel.setText(
-            _translate("MainWindow", "Cycle Countdown"))
+        self.timerLabel.setText(
+            _translate("MainWindow", "Timer"))
         self.orpTextBrowser.setPlaceholderText(
             _translate("MainWindow", "0.00"))
         self.TimeTextBrowser.setPlaceholderText(
@@ -308,24 +310,72 @@ class Ui_MainWindow(object):
         self.startButton.setText(_translate("MainWindow", "Start"))
 
         # -------------- Start Button Click Event-------------------
-        self.startButton.clicked.connect(main.runCycle)
+        self.startButton.clicked.connect(self.Start)
         # ----------------------------------------------------------
 
         self.PauseButton.setText(_translate("MainWindow", "Pause"))
 
         # -------------- Pause Button Click Event-------------------
-        # self.PauseButton.clicked.connect()
+        self.PauseButton.clicked.connect(self.Pause)
         # ----------------------------------------------------------
 
-        self.killCycleButton.setText(_translate("MainWindow", "Kill Cycle"))
+        self.reset.setText(_translate("MainWindow", "Reset"))
 
-        # -------------- kill Button Click Event-------------------
-        self.killCycleButton.clicked.connect(killCycle)
+        # -------------- Reset Button Click Event-------------------
+        self.reset.clicked.connect(self.Reset)
+        # ----------------------------------------------------------
+
+        # https://www.geeksforgeeks.org/pyqt5-digital-stopwatch/
+        # -------------- Timer Information--------------------------
+        timer = QtCore.QTimer(MainWindow)
+        timer.timeout.connect(self.showTime)
+        self.count = 0
+        self.flag = False
+        timer.start(100)
         # ----------------------------------------------------------
 
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.saveAction.setText(_translate("MainWindow", "Save"))
         self.loadAction.setText(_translate("MainWindow", "Load"))
+
+    # https://www.geeksforgeeks.org/pyqt5-digital-stopwatch/
+    def showTime(self):
+
+        # checking if flag is true
+        if self.flag:
+
+            # incrementing the counter
+            self.count += 1
+
+        # getting text from count
+        text = str(self.count / 10)
+
+        # showing text
+        self.TimeTextBrowser.setText(text)
+
+    def timerUI(self):
+        timer = QtCore.QTimer(self)
+        self.count = 0
+        self.flag = False
+        timer.start
+
+    def Start(self):
+        # making flag to true
+        self.flag = True
+
+    def Pause(self):
+        # making flag to False
+        self.flag = False
+
+    def Reset(self):
+        # making flag to false
+        self.flag = False
+
+        # reseeting the count
+        self.count = 0
+
+        # setting text to label
+        self.TimeTextBrowser.setText(str(self.count))
 
 
 if __name__ == "__main__":
