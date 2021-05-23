@@ -11,6 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import main
 import sys
+import decimal
 
 # Code for UI objects
 
@@ -293,6 +294,7 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Timer"))
         self.orpTextBrowser.setPlaceholderText(
             _translate("MainWindow", "0.00"))
+        self.orpTextBrowser.setPlainText("0.000")
         self.TimeTextBrowser.setPlaceholderText(
             _translate("MainWindow", "0:00"))
         self.StartStageLabel.setText(_translate("MainWindow", "Start Stage"))
@@ -305,6 +307,7 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "Duration"))
         self.orpLabel.setText(_translate("MainWindow", "ORP"))
         self.phTextBrowser.setPlaceholderText(_translate("MainWindow", "0.00"))
+        self.phTextBrowser.setPlainText("0.000")
         self.startStageTextEdit.setPlaceholderText(
             _translate("MainWindow", "1"))
         self.startButton.setText(_translate("MainWindow", "Start"))
@@ -328,8 +331,13 @@ class Ui_MainWindow(object):
         # https://www.geeksforgeeks.org/pyqt5-digital-stopwatch/
         # -------------- Timer Information--------------------------
         timer = QtCore.QTimer(MainWindow)
+        timer.setTimerType(QtCore.Qt.PreciseTimer)
+
         timer.timeout.connect(self.showTime)
-        self.count = 0
+        # sets default total time starting at stage 1
+        self.count = main.totalTime(1)
+        self.startStageTextEdit.setPlainText(str(1))
+        print(self.count)
         self.flag = False
         timer.start(100)
         # ----------------------------------------------------------
@@ -345,19 +353,14 @@ class Ui_MainWindow(object):
         if self.flag:
 
             # incrementing the counter
-            self.count += 1
+            self.count -= 1
+        decimal.getcontext().prec = 6
 
         # getting text from count
-        text = str(self.count / 10)
+        text = str(decimal.Decimal(self.count) / decimal.Decimal(1))
 
         # showing text
         self.TimeTextBrowser.setText(text)
-
-    def timerUI(self):
-        timer = QtCore.QTimer(self)
-        self.count = 0
-        self.flag = False
-        timer.start
 
     def Start(self):
         # making flag to true
@@ -371,8 +374,8 @@ class Ui_MainWindow(object):
         # making flag to false
         self.flag = False
 
-        # reseeting the count
-        self.count = 0
+        # resetting the count
+        self.count = main.totalTime(self.startStageTextEdit.toPlainText())
 
         # setting text to label
         self.TimeTextBrowser.setText(str(self.count))

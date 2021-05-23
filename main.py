@@ -60,25 +60,19 @@ Seq = [[1, 0]]
 # Define pin functions
 
 
-def SleepHandler(secondsDuration):
-    startTime = time.time()
+def totalTime(startStage):
+    sum = 0
 
-    while True:
-        currentTime = time.time()
-        elapsedTime = currentTime - startTime
-        print()
-
-        if elapsedTime > secondsDuration:
-            print("Time Cycle Done in: " + str(int(elapsedTime)+" seconds"))
-            break
-
-    print("Finished sleep cycle.")
+    for step in stages:
+        if(int(startStage) <= step["stage"]):
+            sum = sum + step["time"]
+    return sum
 
 
 def n2(secondsDuration):
     print("N2 turned on for ", secondsDuration)
     # RELAY_12.on()
-    SleepHandler(secondsDuration)
+    time.sleep(secondsDuration)
     # RELAY_12.off()
 
 
