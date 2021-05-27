@@ -81,7 +81,7 @@ class Ui_MainWindow(object):
         self.tableWidget.setGridStyle(QtCore.Qt.SolidLine)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(3)
-        self.tableWidget.setRowCount(65)
+        self.tableWidget.setRowCount(10)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(0, item)
         # self.tableWidget.setItem(1, 2, QtWidgets.QTableWidgetItem(str(40)))
@@ -105,114 +105,6 @@ class Ui_MainWindow(object):
         self.tableWidget.setVerticalHeaderItem(9, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(10, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(11, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(12, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(13, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(14, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(15, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(16, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(17, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(18, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(19, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(20, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(21, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(22, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(23, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(24, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(25, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(26, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(27, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(28, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(29, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(30, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(31, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(32, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(33, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(34, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(35, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(36, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(37, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(38, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(39, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(40, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(41, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(42, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(43, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(44, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(45, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(46, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(47, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(48, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(49, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(50, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(51, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(52, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(53, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(54, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(55, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(56, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(57, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(58, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(59, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(60, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(61, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(62, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(63, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(64, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
@@ -304,7 +196,7 @@ class Ui_MainWindow(object):
         item = self.tableWidget.horizontalHeaderItem(1)
         item.setText(_translate("MainWindow", "Stage Mode"))
         item = self.tableWidget.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "Duration"))
+        item.setText(_translate("MainWindow", "Duration (s)"))
         self.orpLabel.setText(_translate("MainWindow", "ORP"))
         self.phTextBrowser.setPlaceholderText(_translate("MainWindow", "0.00"))
         self.phTextBrowser.setPlainText("0.000")
@@ -329,7 +221,7 @@ class Ui_MainWindow(object):
         # ----------------------------------------------------------
 
         # https://www.geeksforgeeks.org/pyqt5-digital-stopwatch/
-        # -------------- Timer Information--------------------------
+        # -------------- Initialize Timer --------------------------
         timer = QtCore.QTimer(MainWindow)
         timer.setTimerType(QtCore.Qt.PreciseTimer)
 
@@ -339,25 +231,33 @@ class Ui_MainWindow(object):
         self.startStageTextEdit.setPlainText(str(1))
         print(self.count)
         self.flag = False
-        timer.start(100)
+        timer.start(1000)
+
+        # --------------- Initialize sheet -------------------------------
+        self.LoadList()
+        self.tableWidget.cellChanged.connect(self.UpdateCell)
+
         # ----------------------------------------------------------
 
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.saveAction.setText(_translate("MainWindow", "Save"))
         self.loadAction.setText(_translate("MainWindow", "Load"))
-
     # https://www.geeksforgeeks.org/pyqt5-digital-stopwatch/
+    # *******TIME FUNCTIONS***********
     def showTime(self):
 
         # checking if flag is true
         if self.flag:
 
-            # incrementing the counter
+            # decrementing the counter
             self.count -= 1
-        decimal.getcontext().prec = 6
 
+        # Converting the self.count --"seconds" into hours, mins and secs.
+        min, sec = divmod(self.count, 60)
+        hour, min = divmod(min, 60)
         # getting text from count
-        text = str(decimal.Decimal(self.count) / decimal.Decimal(1))
+
+        text = "%d:%02d:%02d" % (hour, min, sec)
 
         # showing text
         self.TimeTextBrowser.setText(text)
@@ -379,6 +279,40 @@ class Ui_MainWindow(object):
 
         # setting text to label
         self.TimeTextBrowser.setText(str(self.count))
+    # *******SHEET FUNCTIONS***********
+    # Loads stages into the gui sheet
+
+    def LoadList(self):
+        i = 0
+        for item in main.stages:
+            if item["stage"] is not None:
+                self.tableWidget.setItem(
+                    i, 0, QtWidgets.QTableWidgetItem(str(item["stage"])))
+                self.tableWidget.setItem(
+                    i, 1, QtWidgets.QTableWidgetItem(str(item["stage mode"])))
+                self.tableWidget.setItem(
+                    i, 2, QtWidgets.QTableWidgetItem(str(item["time"])))
+            i += 1
+
+    def UpdateCell(self):
+        col = self.tableWidget.currentColumn()
+        row = self.tableWidget.currentRow()
+
+        if col == 0:
+            itemType = "stage"
+        elif col == 1:
+            itemType = "stage mode"
+        elif col == 2:
+            itemType = "time"
+
+        if(itemType == "stage mode"):
+
+            main.stages[row][itemType] = self.tableWidget.item(row, col).text()
+        else:
+            main.stages[row][itemType] = int(
+                self.tableWidget.item(row, col).text())
+
+        print("entered")
 
 
 if __name__ == "__main__":

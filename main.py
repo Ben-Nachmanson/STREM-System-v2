@@ -8,7 +8,7 @@ import threading
 
 """
 global State
-# Default starting stages
+# Default starting stages with MAX = 10 stages
 stages = [{
     "stage": 1,
     "stage mode": "n2",
@@ -38,6 +38,29 @@ stages = [{
     "stage": 6,
     "stage mode": "still",
     "time": 600
+},
+    {
+
+    "stage": None,
+    "stage mode": None,
+    "time": None
+}, {
+
+    "stage": None,
+    "stage mode": None,
+    "time": None
+},
+    {
+
+    "stage": None,
+    "stage mode": None,
+    "time": None
+},
+    {
+
+    "stage": None,
+    "stage mode": None,
+    "time": None
 }]
 
 # Relay1
@@ -64,8 +87,12 @@ def totalTime(startStage):
     sum = 0
 
     for step in stages:
-        if(int(startStage) <= step["stage"]):
-            sum = sum + step["time"]
+        try:
+            if(int(startStage) <= step["stage"]):
+                sum = sum + step["time"]
+        except:
+            # if None it goes here.
+            print("NoneType")
     return sum
 
 
