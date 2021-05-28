@@ -7,37 +7,36 @@ import threading
     Sequential Batch Reactor, 8 channel relay, anaerobic fermenter = coupled
 
 """
-global State
 # Default starting stages with MAX = 10 stages
 stages = [{
     "stage": 1,
     "stage mode": "n2",
-    "time": 400
+    "time": 1
 },
     {
     "stage": 2,
     "stage mode": "influent",
-    "time": 300
+    "time": 1
 },
     {
     "stage": 3,
     "stage mode": "n2",
-    "time": 100
+    "time": 1
 },
     {
     "stage": 4,
     "stage mode": "still",
-    "time": 1300
+    "time": 1
 },
     {
     "stage": 5,
     "stage mode": "air",
-    "time": 5700
+    "time": 1
 },
     {
     "stage": 6,
     "stage mode": "still",
-    "time": 600
+    "time": 1
 },
     {
 
@@ -62,7 +61,7 @@ stages = [{
     "stage mode": None,
     "time": None
 }]
-
+global maxStage
 # Relay1
 # RELAY_12 = Hardware.Relay(12, False)  # n2
 # RELAY_13 = Hardware.Relay(13, False)  # air
@@ -83,41 +82,40 @@ Seq = [[1, 0]]
 # Define pin functions
 
 
-def totalTime(startStage):
+def TotalTime(startStage):
     sum = 0
-
     for step in stages:
         try:
             if(int(startStage) <= step["stage"]):
                 sum = sum + step["time"]
         except:
-            # if None it goes here.
-            print("NoneType")
+            pass
+            # if None it just goes here.
     return sum
 
 
-def n2(secondsDuration):
+def N2(secondsDuration):
     print("N2 turned on for ", secondsDuration)
     # RELAY_12.on()
     time.sleep(secondsDuration)
     # RELAY_12.off()
 
 
-def air(secondsDuration):
+def Air(secondsDuration):
     print("air turned on for ", secondsDuration)
     # RELAY_13.on()
     time.sleep(secondsDuration)
     # RELAY_13.off()
 
 
-def fermN2(secondsDuration):
+def FermN2(secondsDuration):
     print("N2 for anaerobic fermenter turned on for ", secondsDuration)
     # RELAY_14.on()
     time.sleep(secondsDuration)
     # RELAY_14.off()
 
 
-def stepper(secondsDuration, inOut):
+def Stepper(secondsDuration, inOut):
     start = timer()
 
     print("Stepper duration", secondsDuration,
@@ -172,32 +170,32 @@ def stepper(secondsDuration, inOut):
             break
 
 
-def still(secondsDuration):
+def Still(secondsDuration):
     print("Resting for ", secondsDuration)
     time.sleep(secondsDuration)
 
 
-def dictAdjust():
+def DictAdjust():
     pass
 
 
-def runCycle():
+def RunCycle():
     # step -> {"stage": int, "_" = int}
 
     for step in stages:
         print("stage:", step["stage"])
 
         if step["stage mode"] == "n2":
-            n2(step["time"])
+            N2(step["time"])
 
         elif step["stage mode"] == "air":
-            air(step["time"])
+            Air(step["time"])
 
         elif step["stage mode"] == "fermN2":
-            fermN2(step["time"])
+            FermN2(step["time"])
 
         elif step["stage mode"] == "influent":
-            stepper(step["time"], "in")
+            Stepper(step["time"], "in")
 
             # turn off
             for pin in range(0, 1):
@@ -206,10 +204,10 @@ def runCycle():
                 pass
 
         elif step["stage mode"] == "still":
-            still(step["time"])
+            Still(step["time"])
 
         elif step["stage mode"] == "effluent":
-            stepper(step["time"], "out")
+            Stepper(step["time"], "out")
 
             # turn off
             for pin in range(0, 1):
@@ -218,7 +216,7 @@ def runCycle():
                 pass
 
         elif step["stage mode"] == "fermenter":
-            stepper(step["time"], None)
+            Stepper(step["time"], None)
 
             # turn off
             for pin in range(0, 1):

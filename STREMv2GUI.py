@@ -11,17 +11,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import main
 import sys
-import decimal
 
 # Code for UI objects
-
-
-def check():
-    print("helloBUtton")
-
-
-def killCycle():
-    sys.exit()
 
 
 class Ui_MainWindow(object):
@@ -225,17 +216,20 @@ class Ui_MainWindow(object):
         timer = QtCore.QTimer(MainWindow)
         timer.setTimerType(QtCore.Qt.PreciseTimer)
 
-        timer.timeout.connect(self.showTime)
+        timer.timeout.connect(self.ShowTime)
+        timer.timeout.connect(self.StageTracker)
         # sets default total time starting at stage 1
-        self.count = main.totalTime(1)
+        self.count = main.TotalTime(1)
         self.startStageTextEdit.setPlainText(str(1))
-        print(self.count)
+
         self.flag = False
         timer.start(1000)
 
         # --------------- Initialize sheet -------------------------------
         self.LoadList()
         self.tableWidget.cellChanged.connect(self.UpdateCell)
+        # Keeps track of the current stage.
+        self.currentStage = int(self.startStageTextEdit.toPlainText())-1
 
         # ----------------------------------------------------------
 
@@ -243,8 +237,8 @@ class Ui_MainWindow(object):
         self.saveAction.setText(_translate("MainWindow", "Save"))
         self.loadAction.setText(_translate("MainWindow", "Load"))
     # https://www.geeksforgeeks.org/pyqt5-digital-stopwatch/
-    # *******TIME FUNCTIONS***********
-    def showTime(self):
+    # *******Time Functions***********
+    def ShowTime(self):
 
         # checking if flag is true
         if self.flag:
@@ -275,11 +269,12 @@ class Ui_MainWindow(object):
         self.flag = False
 
         # resetting the count
-        self.count = main.totalTime(self.startStageTextEdit.toPlainText())
+        self.count = main.TotalTime(self.startStageTextEdit.toPlainText())
+        self.currentStage = int(self.startStageTextEdit.toPlainText()) - 1
 
         # setting text to label
         self.TimeTextBrowser.setText(str(self.count))
-    # *******SHEET FUNCTIONS***********
+    # *******Sheet Functions***********
     # Loads stages into the gui sheet
 
     def LoadList(self):
@@ -309,10 +304,37 @@ class Ui_MainWindow(object):
 
             main.stages[row][itemType] = self.tableWidget.item(row, col).text()
         else:
-            main.stages[row][itemType] = int(
-                self.tableWidget.item(row, col).text())
+            try:
+
+                main.stages[row][itemType] = int(
+                    self.tableWidget.item(row, col).text())
+            except:
+                main.stages[row][itemType] = None
 
         print("entered")
+    # *******Stage Functions*************
+    # Keeps track of the current stage and triggering next stage.
+
+    def StageTracker(self):
+        # index
+        i = int(self.startStageTextEdit.toPlainText()) - 1
+        # total stageTime
+        stageTime = 0
+
+        # check if flag is true
+        if self.flag:
+            # adds number of seconds til stage
+            while i <= self.currentStage:
+                try:
+                    stageTime = main.stages[i]["time"] + stageTime
+                except:
+                    self.flag = False
+                    print("Done")
+                    break
+                i += 1
+
+            self.currentStage += 1
+            print(self.currentStage)
 
 
 if __name__ == "__main__":
