@@ -8,10 +8,11 @@ import threading
 
 """
 # Default starting stages with MAX = 10 stages
+# This is basically the spreadsheet. index = rows(1-10), (stage,stage mode, time) = cols(1,2,3)
 stages = [{
     "stage": 1,
     "stage mode": "n2",
-    "time": 1
+    "time": 5
 },
     {
     "stage": 2,
@@ -61,7 +62,6 @@ stages = [{
     "stage mode": None,
     "time": None
 }]
-global maxStage
 # Relay1
 # RELAY_12 = Hardware.Relay(12, False)  # n2
 # RELAY_13 = Hardware.Relay(13, False)  # air
@@ -89,6 +89,7 @@ def TotalTime(startStage):
             if(int(startStage) <= step["stage"]):
                 sum = sum + step["time"]
         except:
+            break
             pass
             # if None it just goes here.
     return sum
@@ -173,10 +174,6 @@ def Stepper(secondsDuration, inOut):
 def Still(secondsDuration):
     print("Resting for ", secondsDuration)
     time.sleep(secondsDuration)
-
-
-def DictAdjust():
-    pass
 
 
 def RunCycle():

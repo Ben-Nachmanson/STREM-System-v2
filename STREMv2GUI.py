@@ -75,7 +75,6 @@ class Ui_MainWindow(object):
         self.tableWidget.setRowCount(10)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(0, item)
-        # self.tableWidget.setItem(1, 2, QtWidgets.QTableWidgetItem(str(40)))
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(1, item)
         item = QtWidgets.QTableWidgetItem()
@@ -171,7 +170,7 @@ class Ui_MainWindow(object):
     # Setting text and naming
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "STREM System"))
         self.phLabel.setText(_translate("MainWindow", "pH "))
         self.timerLabel.setText(
             _translate("MainWindow", "Timer"))
@@ -216,8 +215,12 @@ class Ui_MainWindow(object):
         timer = QtCore.QTimer(MainWindow)
         timer.setTimerType(QtCore.Qt.PreciseTimer)
 
+        # Timer Events -- functions constantly get checked when timer is running.
         timer.timeout.connect(self.ShowTime)
+        timer.timeout.connect(self.HighlightRow)
+
         timer.timeout.connect(self.StageTracker)
+
         # sets default total time starting at stage 1
         self.count = main.TotalTime(1)
         self.startStageTextEdit.setPlainText(str(1))
@@ -228,8 +231,8 @@ class Ui_MainWindow(object):
         # --------------- Initialize sheet -------------------------------
         self.LoadList()
         self.tableWidget.cellChanged.connect(self.UpdateCell)
-        # Keeps track of the current stage.
-        self.currentStage = int(self.startStageTextEdit.toPlainText())
+        # Keeps track of the current stage. -1 for index
+        self.currentStage = int(self.startStageTextEdit.toPlainText()) - 1
 
         # ----------------------------------------------------------
 
@@ -264,16 +267,31 @@ class Ui_MainWindow(object):
         # making flag to False
         self.flag = False
 
+    # Resets the timer/count/currentStage and sets all the cells backgrounds to white.
     def Reset(self):
         # making flag to false
         self.flag = False
 
         # resetting the count
         self.count = main.TotalTime(self.startStageTextEdit.toPlainText())
-        self.currentStage = int(self.startStageTextEdit.toPlainText())
+
+        # resetting current stage -1 for index
+        self.currentStage = int(self.startStageTextEdit.toPlainText()) - 1
 
         # setting text to label
         self.TimeTextBrowser.setText(str(self.count))
+
+        # resets all cell color backgrounds in table back to white.
+        for row in range(self.tableWidget.rowCount()):
+            try:
+                self.tableWidget.item(row,
+                                      0).setBackground(QtGui.QColor(255, 255, 255))
+                self.tableWidget.item(row,
+                                      1).setBackground(QtGui.QColor(255, 255, 255))
+                self.tableWidget.item(row,
+                                      2).setBackground(QtGui.QColor(255, 255, 255))
+            except:
+                print("nothing to change")
     # *******Sheet Functions***********
     # Loads stages into the gui sheet
 
@@ -292,6 +310,7 @@ class Ui_MainWindow(object):
     def UpdateCell(self):
         col = self.tableWidget.currentColumn()
         row = self.tableWidget.currentRow()
+        itemType = None
 
         if col == 0:
             itemType = "stage"
@@ -310,31 +329,63 @@ class Ui_MainWindow(object):
                     self.tableWidget.item(row, col).text())
             except:
                 main.stages[row][itemType] = None
+        print("stop")
 
-        print("entered")
     # *******Stage Functions*************
     # Keeps track of the current stage and triggering next stage.
 
+    # Will highlight the current stage to yellow
+    def HighlightRow(self):
+        if self.flag:
+            try:
+                self.tableWidget.item(self.currentStage,
+                                      0).setBackground(QtGui.QColor(255, 255, 0))
+                self.tableWidget.item(self.currentStage,
+                                      1).setBackground(QtGui.QColor(255, 255, 0))
+                self.tableWidget.item(self.currentStage,
+                                      2).setBackground(QtGui.QColor(255, 255, 0))
+            except:
+                print("nothing to do")
+
     def StageTracker(self):
-        # index --- start index
-        i = int(self.startStageTextEdit.toPlainText()) - 1
+
         # countDown runtime
         runTime = main.TotalTime(
             self.startStageTextEdit.toPlainText()) - self.count
-        # sum of current stages
-        stageSum = 0
-        # check to see if time is running.
+
+        # total Timer time
+        fullCountdownTime = main.TotalTime(
+            self.startStageTextEdit.toPlainText())
         if self.flag:
-            while runTime != stageSum:
-                if main.stages[i]["time"] is None:
-                    break
-                stageSum = main.stages[i]["time"] + stageSum
-                i += 1
-            if main.TotalTime(self.startStageTextEdit.toPlainText()) == stageSum:
+
+            # sum of current stages
+            stageSum = self.getStagesSum()
+
+            # Checks to see if it is the last stage
+            if fullCountdownTime == stageSum and stageSum == runTime:
+                self.currentStage += 1
+
+                # highlights last row
+                self.HighlightRow()
+
+                # sets timer flag to false
                 self.flag = False
-            else:
-                self.currentStage = i + 1
-        print(self.currentStage)
+
+            # checks if the stage has gone full runtime
+            elif runTime == stageSum:
+                self.currentStage += 1
+
+    # returns the sum of stages that have been ran
+    def getStagesSum(self):
+        start = int(self.startStageTextEdit.toPlainText())-1
+        end = self.currentStage + 1
+        sum = 0
+        for x in range(start, end):
+            try:
+                sum = main.stages[x]["time"] + sum
+            except:
+                print("Empty")
+        return sum
 
 
 if __name__ == "__main__":
