@@ -229,7 +229,7 @@ class Ui_MainWindow(object):
         self.LoadList()
         self.tableWidget.cellChanged.connect(self.UpdateCell)
         # Keeps track of the current stage.
-        self.currentStage = int(self.startStageTextEdit.toPlainText())-1
+        self.currentStage = int(self.startStageTextEdit.toPlainText())
 
         # ----------------------------------------------------------
 
@@ -270,7 +270,7 @@ class Ui_MainWindow(object):
 
         # resetting the count
         self.count = main.TotalTime(self.startStageTextEdit.toPlainText())
-        self.currentStage = int(self.startStageTextEdit.toPlainText()) - 1
+        self.currentStage = int(self.startStageTextEdit.toPlainText())
 
         # setting text to label
         self.TimeTextBrowser.setText(str(self.count))
@@ -316,25 +316,25 @@ class Ui_MainWindow(object):
     # Keeps track of the current stage and triggering next stage.
 
     def StageTracker(self):
-        # index
+        # index --- start index
         i = int(self.startStageTextEdit.toPlainText()) - 1
-        # total stageTime
-        stageTime = 0
-
-        # check if flag is true
+        # countDown runtime
+        runTime = main.TotalTime(
+            self.startStageTextEdit.toPlainText()) - self.count
+        # sum of current stages
+        stageSum = 0
+        # check to see if time is running.
         if self.flag:
-            # adds number of seconds til stage
-            while i <= self.currentStage:
-                try:
-                    stageTime = main.stages[i]["time"] + stageTime
-                except:
-                    self.flag = False
-                    print("Done")
+            while runTime != stageSum:
+                if main.stages[i]["time"] is None:
                     break
+                stageSum = main.stages[i]["time"] + stageSum
                 i += 1
-
-            self.currentStage += 1
-            print(self.currentStage)
+            if main.TotalTime(self.startStageTextEdit.toPlainText()) == stageSum:
+                self.flag = False
+            else:
+                self.currentStage = i + 1
+        print(self.currentStage)
 
 
 if __name__ == "__main__":
