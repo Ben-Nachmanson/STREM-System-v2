@@ -214,19 +214,15 @@ class Ui_MainWindow(object):
         # -------------- Initialize Timer --------------------------
         timer = QtCore.QTimer(MainWindow)
         timer.setTimerType(QtCore.Qt.PreciseTimer)
+        self.count = main.TotalTime(1)
+        self.startStageTextEdit.setPlainText(str(1))
+        self.flag = False
+        timer.start(1000)
 
         # Timer Events -- functions constantly get checked when timer is running.
         timer.timeout.connect(self.ShowTime)
         timer.timeout.connect(self.HighlightRow)
-
         timer.timeout.connect(self.StageTracker)
-
-        # sets default total time starting at stage 1
-        self.count = main.TotalTime(1)
-        self.startStageTextEdit.setPlainText(str(1))
-
-        self.flag = False
-        timer.start(1000)
 
         # --------------- Initialize sheet -------------------------------
         self.LoadList()
@@ -262,6 +258,7 @@ class Ui_MainWindow(object):
     def Start(self):
         # making flag to true
         self.flag = True
+        self.stageTrigger()
 
     def Pause(self):
         # making flag to False
@@ -329,7 +326,6 @@ class Ui_MainWindow(object):
                     self.tableWidget.item(row, col).text())
             except:
                 main.stages[row][itemType] = None
-        print("stop")
 
     # *******Stage Functions*************
     # Keeps track of the current stage and triggering next stage.
@@ -364,7 +360,7 @@ class Ui_MainWindow(object):
             # Checks to see if it is the last stage
             if fullCountdownTime == stageSum and stageSum == runTime:
                 self.currentStage += 1
-
+                self.stageTrigger()
                 # highlights last row
                 self.HighlightRow()
 
@@ -374,8 +370,10 @@ class Ui_MainWindow(object):
             # checks if the stage has gone full runtime
             elif runTime == stageSum:
                 self.currentStage += 1
+                self.stageTrigger()
 
     # returns the sum of stages that have been ran
+
     def getStagesSum(self):
         start = int(self.startStageTextEdit.toPlainText())-1
         end = self.currentStage + 1
@@ -386,6 +384,34 @@ class Ui_MainWindow(object):
             except:
                 print("Empty")
         return sum
+
+    def stageTrigger(self):
+        stage = self.currentStage
+
+        # TURN EVERYTHING OFF
+        print(main.stages[stage]["stage mode"])
+
+        if(main.stages[stage]["stage mode"] == "n2"):
+            print("n2 on")
+            pass
+        elif(main.stages[stage]["stage mode"] == "air"):
+            print("air on")
+            pass
+        elif(main.stages[stage]["stage mode"] == "fermN2"):
+            print("fermN2 on")
+            pass
+        elif(main.stages[stage]["stage mode"] == "influent"):
+            print("influent on")
+            pass
+        elif(main.stages[stage]["stage mode"] == "still"):
+            print("still on")
+            pass
+        elif(main.stages[stage]["stage mode"] == "effluent"):
+            print("effluent on")
+            pass
+        elif(main.stages[stage]["stage mode"] == "fermenter"):
+            print("fermenter on")
+            pass
 
 
 if __name__ == "__main__":

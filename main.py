@@ -62,6 +62,7 @@ stages = [{
     "stage mode": None,
     "time": None
 }]
+
 # Relay1
 # RELAY_12 = Hardware.Relay(12, False)  # n2
 # RELAY_13 = Hardware.Relay(13, False)  # air
@@ -95,11 +96,13 @@ def TotalTime(startStage):
     return sum
 
 
-def N2(secondsDuration):
-    print("N2 turned on for ", secondsDuration)
-    # RELAY_12.on()
-    time.sleep(secondsDuration)
-    # RELAY_12.off()
+def N2(onOrOff):
+    if(onOrOff == "on"):
+        # RELAY_12.on()
+        pass
+    elif(onOrOff == "off"):
+        # RELAY_12.off()
+        pass
 
 
 def Air(secondsDuration):
