@@ -1,12 +1,12 @@
 import time
 from timeit import default_timer as timer
-import threading
 # import Hardware
 
 """
     Sequential Batch Reactor, 8 channel relay, anaerobic fermenter = coupled
 
 """
+
 # Default starting stages with MAX = 10 stages
 # This is basically the spreadsheet. index = rows(1-10), (stage,stage mode, time) = cols(1,2,3)
 stages = [{
@@ -63,10 +63,15 @@ stages = [{
     "time": None
 }]
 
+# List of possible stageModes
+stageModes = ["n2", "air", "fermN2", "influent",
+              "effluent", "fermenter", "still"]
 # Relay1
 # RELAY_12 = Hardware.Relay(12, False)  # n2
 # RELAY_13 = Hardware.Relay(13, False)  # air
 # RELAY_14 = Hardware.Relay(1, False)  # fermenter_n2
+
+# ph_sensor = PHSensor(....)
 
 # IN5 = Hardware.Relay(17, False)
 # IN6 = Hardware.Relay(16, False)
@@ -83,6 +88,15 @@ Seq = [[1, 0]]
 # Define pin functions
 
 
+def ListLength():
+    i = 0
+    for step in stages:
+        if(step["stage"] == None):
+            break
+        i += 1
+    return i
+
+
 def TotalTime(startStage):
     sum = 0
     for step in stages:
@@ -96,27 +110,27 @@ def TotalTime(startStage):
     return sum
 
 
-def N2(onOrOff):
-    if(onOrOff == "on"):
-        # RELAY_12.on()
-        pass
-    elif(onOrOff == "off"):
-        # RELAY_12.off()
-        pass
+# def N2(onOrOff):
+#     if(onOrOff == "on"):
+#         # RELAY_12.on()
+#         pass
+#     elif(onOrOff == "off"):
+#         # RELAY_12.off()
+#         pass
 
 
-def Air(secondsDuration):
-    print("air turned on for ", secondsDuration)
-    # RELAY_13.on()
-    time.sleep(secondsDuration)
-    # RELAY_13.off()
+# def Air(secondsDuration):
+#     print("air turned on for ", secondsDuration)
+#     # RELAY_13.on()
+#     time.sleep(secondsDuration)
+#     # RELAY_13.off()
 
 
-def FermN2(secondsDuration):
-    print("N2 for anaerobic fermenter turned on for ", secondsDuration)
-    # RELAY_14.on()
-    time.sleep(secondsDuration)
-    # RELAY_14.off()
+# def FermN2(secondsDuration):
+#     print("N2 for anaerobic fermenter turned on for ", secondsDuration)
+#     # RELAY_14.on()
+#     time.sleep(secondsDuration)
+#     # RELAY_14.off()
 
 
 def Stepper(secondsDuration, inOut):
@@ -146,7 +160,7 @@ def Stepper(secondsDuration, inOut):
 
     while True:
 
-        print("step counter:", StepCounter, " line:", Seq[StepCounter])
+        #print("step counter:", StepCounter, " line:", Seq[StepCounter])
         for pin in range(0, 1):
             # xpin = StepPins[pin]
             pass
@@ -159,6 +173,7 @@ def Stepper(secondsDuration, inOut):
 
         StepCounter += StepDir
         print("Next Line:", StepCounter)
+        
         if (StepCounter >= StepCount):
             StepCounter = 0
         if (StepCounter < 0):
@@ -174,55 +189,133 @@ def Stepper(secondsDuration, inOut):
             break
 
 
-def Still(secondsDuration):
-    print("Resting for ", secondsDuration)
-    time.sleep(secondsDuration)
+# def Still(secondsDuration):
+#     print("Resting for ", secondsDuration)
+#     time.sleep(secondsDuration)
 
 
-def RunCycle():
-    # step -> {"stage": int, "_" = int}
+def TurnOnStage(stageMode):
+    if(stageMode == "n2"):
+        # RELAY_12.on()
+        print("n2 on")
+        pass
 
-    for step in stages:
-        print("stage:", step["stage"])
+    elif(stageMode == "air"):
+        # RELAY_13.on()
+        print("air on")
+        pass
+    elif(stageMode == "fermN2"):
+        # RELAY_14.on()
+        print("fermN2 on")
+        pass
+    elif(stageMode == "influent"):
+        # Stepper(in)
+        print("influent on")
 
-        if step["stage mode"] == "n2":
-            N2(step["time"])
+        pass
+    elif(stageMode == "effluent"):
+        # Stepper(out)
+        print("effluent on")
 
-        elif step["stage mode"] == "air":
-            Air(step["time"])
+        pass
+    elif(stageMode == "fermenter"):
+        #  Stepper(None)
+        print("fermenter on")
 
-        elif step["stage mode"] == "fermN2":
-            FermN2(step["time"])
+        pass
+    elif(stageMode == "still"):
+        # Do nothing --- Wait
+        print("still on")
 
-        elif step["stage mode"] == "influent":
-            Stepper(step["time"], "in")
+        pass
+    else:
+        # Error
+        pass
 
-            # turn off
-            for pin in range(0, 1):
-                # xpin = Stepper1Pins[pin]
-                # xpin.off()
-                pass
 
-        elif step["stage mode"] == "still":
-            Still(step["time"])
+def TurnOffStage(stageMode):
+    if(stageMode == "n2"):
+        # RELAY_12.off()
+        print("n2 off")
+        pass
 
-        elif step["stage mode"] == "effluent":
-            Stepper(step["time"], "out")
+    elif(stageMode == "air"):
+        # RELAY_13.off()
+        print("air off")
+        pass
+    elif(stageMode == "fermN2"):
+        # RELAY_14.off()
+        print("fermN2 off")
+        pass
+    elif(stageMode == "influent"):
+        # Stepper(in)
+        print("influent off")
 
-            # turn off
-            for pin in range(0, 1):
-                # xpin = Stepper2Pins[pin]
-                # xpin.off()
-                pass
+        pass
+    elif(stageMode == "effluent"):
+        # Stepper(out)
+        print("effluent off")
 
-        elif step["stage mode"] == "fermenter":
-            Stepper(step["time"], None)
+        pass
+    elif(stageMode == "fermenter"):
+        #  Stepper(None)
+        print("fermenter off")
 
-            # turn off
-            for pin in range(0, 1):
-                # xpin = Stepper3Pins[pin]
-                # xpin.off()
-                pass
+        pass
+    elif(stageMode == "still"):
+        # Do nothing --- Wait
+        print("still off")
 
-        else:
-            print("error", print(step))
+        pass
+    else:
+        # Error
+        pass
+
+
+# def RunCycle():
+#     # step -> {"stage": int, "_" = int}
+
+#     for step in stages:
+#         print("stage:", step["stage"])
+
+#         if step["stage mode"] == "n2":
+#             N2(step["time"])
+
+#         elif step["stage mode"] == "air":
+#             Air(step["time"])
+
+#         elif step["stage mode"] == "fermN2":
+#             FermN2(step["time"])
+
+#         elif step["stage mode"] == "influent":
+#             Stepper(step["time"], "in")
+
+#             # turn off
+#             for pin in range(0, 1):
+#                 # xpin = Stepper1Pins[pin]
+#                 # xpin.off()
+#                 pass
+
+#         elif step["stage mode"] == "still":
+#             Still(step["time"])
+
+#         elif step["stage mode"] == "effluent":
+#             Stepper(step["time"], "out")
+
+#             # turn off
+#             for pin in range(0, 1):
+#                 # xpin = Stepper2Pins[pin]
+#                 # xpin.off()
+#                 pass
+
+#         elif step["stage mode"] == "fermenter":
+#             Stepper(step["time"], None)
+
+#             # turn off
+#             for pin in range(0, 1):
+#                 # xpin = Stepper3Pins[pin]
+#                 # xpin.off()
+#                 pass
+
+#         else:
+#             print("error", print(step))

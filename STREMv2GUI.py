@@ -10,6 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import main
+import datetime
 import sys
 
 # Code for UI objects
@@ -197,6 +198,9 @@ class Ui_MainWindow(object):
         # -------------- Start Button Click Event-------------------
         self.startButton.clicked.connect(self.Start)
         # ----------------------------------------------------------
+        # -------------- Start Stage Text Edit Event-------------------
+        self.startStageTextEdit.textChanged.connect(self.StartStageTextCheck)
+        # ----------------------------------------------------------
 
         self.PauseButton.setText(_translate("MainWindow", "Pause"))
 
@@ -207,11 +211,11 @@ class Ui_MainWindow(object):
         self.reset.setText(_translate("MainWindow", "Reset"))
 
         # -------------- Reset Button Click Event-------------------
-        self.reset.clicked.connect(self.Reset)
+        self.reset.clicked.connect(self.ResetButtonClicked)
         # ----------------------------------------------------------
 
         # https://www.geeksforgeeks.org/pyqt5-digital-stopwatch/
-        # -------------- Initialize Timer --------------------------
+        # -------------- Initialize Timer & Interval Timer --------------------------
         timer = QtCore.QTimer(MainWindow)
         timer.setTimerType(QtCore.Qt.PreciseTimer)
         self.count = main.TotalTime(1)
@@ -219,10 +223,22 @@ class Ui_MainWindow(object):
         self.flag = False
         timer.start(1000)
 
+        # Interval Timer
+
+        intervalTimer = QtCore.QTimer(MainWindow)
+        intervalTimer.setTimerType(QtCore.Qt.PreciseTimer)
+        intervalTimer.timeout.connect(self.IntervalWriteToFile)
+        intervalTimer.timeout.connect(self.PHSetter)
+        intervalTimer.timeout.connect(self.OrpSetter)
+        intervalTimer.start(1000)
+        self.intervalCount = 0
+        self.file = open("PH and Orp Data.txt", "w")
+
         # Timer Events -- functions constantly get checked when timer is running.
         timer.timeout.connect(self.ShowTime)
         timer.timeout.connect(self.HighlightRow)
         timer.timeout.connect(self.StageTracker)
+        timer.timeout.connect(self.CycleReset)
 
         # --------------- Initialize sheet -------------------------------
         self.LoadList()
@@ -258,22 +274,58 @@ class Ui_MainWindow(object):
     def Start(self):
         # making flag to true
         self.flag = True
-        self.stageTrigger()
+        main.TurnOnStage(main.stages[self.currentStage]["stage mode"])
 
     def Pause(self):
         # making flag to False
         self.flag = False
 
+        main.TurnOffStage(main.stages[self.currentStage]["stage mode"])
+
+    def CycleReset(self):
+        if(self.count == 0):
+            self.ResetButtonClicked()
+            print("Resetting")
+            self.Start()
+    # Writes to file every five minutes
+
+    def IntervalWriteToFile(self):
+        self.intervalCount += 1
+
+        # 300 seconds - > 5 mins - interval count is just the time
+        if(self.intervalCount % 300 == 0):
+            year = datetime.datetime.now().year
+            month = datetime.datetime.now().month
+            day = datetime.datetime.now().day
+            now = datetime.datetime.now()
+
+            currentTime = now.strftime("%H:%M:%S")
+
+            date = str(year)+" / "+str(month)+" / " + \
+                str(day) + " - " + currentTime
+            self.file.write(date + " -> "+" pH: " + self.phTextBrowser.toPlainText() +
+                            " ORP: " + self.orpTextBrowser.toPlainText() + "\n")
+
+        print(self.intervalCount)
+
+        # ------Interval Timer------------
     # Resets the timer/count/currentStage and sets all the cells backgrounds to white.
-    def Reset(self):
+
+    def ResetButtonClicked(self):
         # making flag to false
         self.flag = False
-
+        if(self.count != main.TotalTime(self.startStageTextEdit.toPlainText())):
+            if(self.currentStage < len(main.stages)-1):
+                main.TurnOffStage(main.stages[self.currentStage]["stage mode"])
+            else:
+                main.TurnOffStage(
+                    main.stages[self.currentStage - 1]["stage mode"])
         # resetting the count
         self.count = main.TotalTime(self.startStageTextEdit.toPlainText())
-
         # resetting current stage -1 for index
-        self.currentStage = int(self.startStageTextEdit.toPlainText()) - 1
+        if(self.startStageTextEdit.toPlainText() != '#Name?'):
+            self.currentStage = int(self.startStageTextEdit.toPlainText()) - 1
+            self.startStageTextEdit.setPlainText(str(self.currentStage+1))
 
         # setting text to label
         self.TimeTextBrowser.setText(str(self.count))
@@ -288,9 +340,23 @@ class Ui_MainWindow(object):
                 self.tableWidget.item(row,
                                       2).setBackground(QtGui.QColor(255, 255, 255))
             except:
-                print("nothing to change")
+                pass
     # *******Sheet Functions***********
     # Loads stages into the gui sheet
+
+    def StartStageTextCheck(self):
+        if(self.startStageTextEdit.toPlainText().isdigit()):
+            if(int(self.startStageTextEdit.toPlainText()) > main.ListLength()):
+                self.startStageTextEdit.setPlainText('#Name?')
+            else:
+                print("valid")
+        elif(self.startStageTextEdit.toPlainText() == ''):
+            print("empty")
+        elif (self.startStageTextEdit.toPlainText() != '#Name?'):
+            self.startStageTextEdit.setPlainText('#Name?')
+        else:
+            print("null")
+            pass
 
     def LoadList(self):
         i = 0
@@ -315,17 +381,24 @@ class Ui_MainWindow(object):
             itemType = "stage mode"
         elif col == 2:
             itemType = "time"
-
-        if(itemType == "stage mode"):
-
-            main.stages[row][itemType] = self.tableWidget.item(row, col).text()
+        if(self.tableWidget.item(row, col)is None):
+            pass
+        elif(self.tableWidget.item(row, col).text() == ''):
+            main.stages[row][itemType] = None
         else:
-            try:
 
-                main.stages[row][itemType] = int(
-                    self.tableWidget.item(row, col).text())
-            except:
-                main.stages[row][itemType] = None
+            if(itemType == "stage mode"):
+                if(self.tableWidget.item(row, col).text() in main.stageModes):
+                    main.stages[row][itemType] = self.tableWidget.item(
+                        row, col).text()
+                else:
+                    self.tableWidget.item(row, col).setText("#Name?")
+            else:
+                if(self.tableWidget.item(row, col).text().isdigit()):
+                    main.stages[row][itemType] = int(
+                        self.tableWidget.item(row, col).text())
+                else:
+                    self.tableWidget.item(row, col).setText("#Name?")
 
     # *******Stage Functions*************
     # Keeps track of the current stage and triggering next stage.
@@ -334,12 +407,15 @@ class Ui_MainWindow(object):
     def HighlightRow(self):
         if self.flag:
             try:
-                self.tableWidget.item(self.currentStage,
-                                      0).setBackground(QtGui.QColor(255, 255, 0))
-                self.tableWidget.item(self.currentStage,
-                                      1).setBackground(QtGui.QColor(255, 255, 0))
-                self.tableWidget.item(self.currentStage,
-                                      2).setBackground(QtGui.QColor(255, 255, 0))
+                if(main.stages[self.currentStage]["stage"] is not None or main.stages[self.currentStage]["stage mode"] is not None or main.stages[self.currentStage]["time"]):
+                    self.tableWidget.item(self.currentStage,
+                                          0).setBackground(QtGui.QColor(255, 255, 0))
+                    self.tableWidget.item(self.currentStage,
+                                          1).setBackground(QtGui.QColor(255, 255, 0))
+
+                    self.tableWidget.item(self.currentStage,
+                                          2).setBackground(QtGui.QColor(255, 255, 0))
+
             except:
                 print("nothing to do")
 
@@ -355,26 +431,29 @@ class Ui_MainWindow(object):
         if self.flag:
 
             # sum of current stages
-            stageSum = self.getStagesSum()
+            stageSum = self.GetStagesSum()
 
             # Checks to see if it is the last stage
             if fullCountdownTime == stageSum and stageSum == runTime:
+                main.TurnOffStage(main.stages[self.currentStage]["stage mode"])
                 self.currentStage += 1
-                self.stageTrigger()
-                # highlights last row
-                self.HighlightRow()
+                if(self.currentStage < len(main.stages)-1):
+                    main.TurnOnStage(
+                        main.stages[self.currentStage]["stage mode"])
+                    # highlights last row
+                    self.HighlightRow()
 
                 # sets timer flag to false
                 self.flag = False
 
             # checks if the stage has gone full runtime
             elif runTime == stageSum:
+                main.TurnOffStage(main.stages[self.currentStage]["stage mode"])
                 self.currentStage += 1
-                self.stageTrigger()
+                main.TurnOnStage(main.stages[self.currentStage]["stage mode"])
 
     # returns the sum of stages that have been ran
-
-    def getStagesSum(self):
+    def GetStagesSum(self):
         start = int(self.startStageTextEdit.toPlainText())-1
         end = self.currentStage + 1
         sum = 0
@@ -385,33 +464,13 @@ class Ui_MainWindow(object):
                 print("Empty")
         return sum
 
-    def stageTrigger(self):
-        stage = self.currentStage
+    def PHSetter(self):
+        # put real pH reading here later
+        self.phTextBrowser.setPlainText("1.22")
 
-        # TURN EVERYTHING OFF
-        print(main.stages[stage]["stage mode"])
-
-        if(main.stages[stage]["stage mode"] == "n2"):
-            print("n2 on")
-            pass
-        elif(main.stages[stage]["stage mode"] == "air"):
-            print("air on")
-            pass
-        elif(main.stages[stage]["stage mode"] == "fermN2"):
-            print("fermN2 on")
-            pass
-        elif(main.stages[stage]["stage mode"] == "influent"):
-            print("influent on")
-            pass
-        elif(main.stages[stage]["stage mode"] == "still"):
-            print("still on")
-            pass
-        elif(main.stages[stage]["stage mode"] == "effluent"):
-            print("effluent on")
-            pass
-        elif(main.stages[stage]["stage mode"] == "fermenter"):
-            print("fermenter on")
-            pass
+    def OrpSetter(self):
+        # put real Orp reading here later.
+        self.orpTextBrowser.setPlainText("0.22")
 
 
 if __name__ == "__main__":
