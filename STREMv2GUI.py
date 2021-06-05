@@ -12,6 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import main
 import datetime
 import sys
+import time
 
 # Code for UI objects
 
@@ -169,9 +170,10 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     # Setting text and naming
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "STREM System"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "STREM-System-V2"))
         self.phLabel.setText(_translate("MainWindow", "pH "))
         self.timerLabel.setText(
             _translate("MainWindow", "Timer"))
@@ -232,7 +234,6 @@ class Ui_MainWindow(object):
         intervalTimer.timeout.connect(self.OrpSetter)
         intervalTimer.start(1000)
         self.intervalCount = 0
-        self.file = open("PH and Orp Data.txt", "w")
 
         # Timer Events -- functions constantly get checked when timer is running.
         timer.timeout.connect(self.ShowTime)
@@ -251,6 +252,10 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.saveAction.setText(_translate("MainWindow", "Save"))
         self.loadAction.setText(_translate("MainWindow", "Load"))
+
+        self.loadAction.triggered.connect(self.Load)
+        self.saveAction.triggered.connect(self.Save)
+
     # https://www.geeksforgeeks.org/pyqt5-digital-stopwatch/
     # *******Time Functions***********
     def ShowTime(self):
@@ -303,8 +308,13 @@ class Ui_MainWindow(object):
 
             date = str(year)+" / "+str(month)+" / " + \
                 str(day) + " - " + currentTime
-            self.file.write(date + " -> "+" pH: " + self.phTextBrowser.toPlainText() +
-                            " ORP: " + self.orpTextBrowser.toPlainText() + "\n")
+            file = open("PH and Orp Data.txt", "a")
+
+            print(date + " -> "+" pH: " + self.phTextBrowser.toPlainText() +
+                  " ORP: " + self.orpTextBrowser.toPlainText() + "\n")
+            file.write(date + " -> "+" pH: " + self.phTextBrowser.toPlainText() +
+                       " ORP: " + self.orpTextBrowser.toPlainText() + "\n")
+            file.close()
 
         print(self.intervalCount)
 
@@ -314,6 +324,10 @@ class Ui_MainWindow(object):
     def ResetButtonClicked(self):
         # making flag to false
         self.flag = False
+        if(self.startStageTextEdit.toPlainText() == ''):
+            self.currentStage = 0
+            self.startStageTextEdit.setPlainText(str(1))
+
         if(self.count != main.TotalTime(self.startStageTextEdit.toPlainText())):
             if(self.currentStage < len(main.stages)-1):
                 main.TurnOffStage(main.stages[self.currentStage]["stage mode"])
@@ -323,7 +337,7 @@ class Ui_MainWindow(object):
         # resetting the count
         self.count = main.TotalTime(self.startStageTextEdit.toPlainText())
         # resetting current stage -1 for index
-        if(self.startStageTextEdit.toPlainText() != '#Name?'):
+        if(self.startStageTextEdit.toPlainText() != 'invalid'):
             self.currentStage = int(self.startStageTextEdit.toPlainText()) - 1
             self.startStageTextEdit.setPlainText(str(self.currentStage+1))
 
@@ -346,14 +360,14 @@ class Ui_MainWindow(object):
 
     def StartStageTextCheck(self):
         if(self.startStageTextEdit.toPlainText().isdigit()):
-            if(int(self.startStageTextEdit.toPlainText()) > main.ListLength()):
-                self.startStageTextEdit.setPlainText('#Name?')
+            if(int(self.startStageTextEdit.toPlainText()) > main.ListLength() or int(self.startStageTextEdit.toPlainText()) <= 0):
+                self.startStageTextEdit.setPlainText('invalid')
             else:
                 print("valid")
         elif(self.startStageTextEdit.toPlainText() == ''):
             print("empty")
-        elif (self.startStageTextEdit.toPlainText() != '#Name?'):
-            self.startStageTextEdit.setPlainText('#Name?')
+        elif (self.startStageTextEdit.toPlainText() != 'invalid'):
+            self.startStageTextEdit.setPlainText('invalid')
         else:
             print("null")
             pass
@@ -472,9 +486,56 @@ class Ui_MainWindow(object):
         # put real Orp reading here later.
         self.orpTextBrowser.setPlainText("0.22")
 
+    # Save and Load
+    def Save(self):
+        print("save pressed")
+        self.SaveDialogBox()
+        pass
+
+    def Load(self):
+        print("loadPressed")
+        self.OpenDialogBox()
+
+    def OpenDialogBox(self):
+        fileName = QtWidgets.QFileDialog.getOpenFileName(
+            None, "Loading...", "", "Text files(*.txt)")
+        path = fileName[0]
+        if(path != ''):
+            with open(path, "r") as file:
+                print(file.readlines())
+
+    def SaveDialogBox(self):
+        fileName = QtWidgets.QFileDialog.getSaveFileName(
+            None, "Saving...", "", "Text files(*.txt)")
+        path = fileName[0]
+        i = 0
+        if(path != ''):
+            with open(path, "w") as file:
+                for step in main.stages:
+
+                    file.write(str(step["stage"]) + "\n")
+                    file.write(str(step["stage mode"]) + "\n")
+                    file.write(str(step["time"]) + "\n\n")
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
+    # # Splash Screen********************************
+    # splash_pix = QtGui.QPixmap('SplashScreen.png')
+    # splash = QtWidgets.QSplashScreen(
+    #     splash_pix, QtCore.Qt.WindowStaysOnTopHint)
+    # # add fade to splashscreen
+    # opaqueness = 0.0
+    # step = 0.03
+    # splash.setWindowOpacity(opaqueness)
+    # splash.show()
+    # while opaqueness < 1:
+    #     splash.setWindowOpacity(opaqueness)
+    #     time.sleep(step)  # Sleep for 3 seconds
+    #     opaqueness += (2*step)
+    # time.sleep(1.2)
+    # splash.close()
+    # # **********************************************
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
