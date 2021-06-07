@@ -9,30 +9,31 @@ from timeit import default_timer as timer
 
 # Default starting stages with MAX = 10 stages
 # This is basically the spreadsheet. index = rows(1-10), (stage,stage mode, time) = cols(1,2,3)
+# IMPORTANT: IF THERE IS NO Stage just set "stage": NONE , "stage mode" = NONE, "time " = NONE
 stages = [{
     "stage": 1,
     "stage mode": "n2",
-    "time": 5
+    "time": 50
 },
     {
     "stage": 2,
-    "stage mode": "influent",
-    "time": 1
+    "stage mode": "air",
+    "time": 100
 },
     {
     "stage": 3,
     "stage mode": "n2",
-    "time": 1
+    "time": 144
 },
     {
     "stage": 4,
     "stage mode": "still",
-    "time": 1
+    "time": 122
 },
     {
     "stage": 5,
-    "stage mode": "air",
-    "time": 1
+    "stage mode": "still",
+    "time": 1332
 },
     {
     "stage": 6,
@@ -41,20 +42,20 @@ stages = [{
 },
     {
 
-    "stage": None,
-    "stage mode": None,
-    "time": None
+    "stage": 7,
+    "stage mode": "effluent",
+    "time": 233
 }, {
 
-    "stage": None,
-    "stage mode": None,
-    "time": None
+    "stage": 8,
+    "stage mode": "influent",
+    "time": 1000
 },
     {
 
-    "stage": None,
-    "stage mode": None,
-    "time": None
+    "stage": 9,
+    "stage mode": "effluent",
+    "time": 1111
 },
     {
 
@@ -173,7 +174,7 @@ def Stepper(secondsDuration, inOut):
 
         StepCounter += StepDir
         print("Next Line:", StepCounter)
-        
+
         if (StepCounter >= StepCount):
             StepCounter = 0
         if (StepCounter < 0):

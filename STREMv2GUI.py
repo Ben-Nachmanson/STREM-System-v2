@@ -384,6 +384,17 @@ class Ui_MainWindow(object):
                     i, 2, QtWidgets.QTableWidgetItem(str(item["time"])))
             i += 1
 
+    def ClearSheet(self):
+        i = 0
+        while(i != 10):
+            self.tableWidget.setItem(
+                i, 0, QtWidgets.QTableWidgetItem(""))
+            self.tableWidget.setItem(
+                i, 1, QtWidgets.QTableWidgetItem(""))
+            self.tableWidget.setItem(
+                i, 2, QtWidgets.QTableWidgetItem(""))
+            i += 1
+
     def UpdateCell(self):
         col = self.tableWidget.currentColumn()
         row = self.tableWidget.currentRow()
@@ -495,6 +506,8 @@ class Ui_MainWindow(object):
     def Load(self):
         print("loadPressed")
         self.OpenDialogBox()
+        self.ClearSheet()
+        self.LoadList()
 
     def OpenDialogBox(self):
         fileName = QtWidgets.QFileDialog.getOpenFileName(
@@ -504,8 +517,29 @@ class Ui_MainWindow(object):
         if(path != ''):
             with open(path, "r") as file:
                 fileList = file.readlines()
+        # load it back into Stages
+        index = 0
+        itemType = 0
+
         for item in fileList:
-            print(item)
+            item = item.strip('\n')
+            if (itemType % 3 == 0):
+                if(item != 'None'):
+                    main.stages[index]["stage"] = int(item)
+                else:
+                    main.stages[index]["stage"] = None
+            elif(itemType % 3 == 1):
+                if(item != 'None'):
+                    main.stages[index]["stage mode"] = item
+                else:
+                    main.stages[index]["stage mode"] = None
+            elif(itemType % 3 == 2):
+                if(item != 'None'):
+                    main.stages[index]["time"] = int(item)
+                else:
+                    main.stages[index]["time"] = None
+                index += 1
+            itemType += 1
 
     def SaveDialogBox(self):
         fileName = QtWidgets.QFileDialog.getSaveFileName(
@@ -539,6 +573,7 @@ if __name__ == "__main__":
     # time.sleep(1.2)
     # splash.close()
     # # **********************************************
+    main.Stepper(200, "in")
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
