@@ -15,7 +15,7 @@ PyQt5
 > pip install PyQt5
 
 ## Mac
-> brew install pyqt
+> python3 -m pip install PyQt5
 
 Please Refer to https://pythonbasics.org/install-pyqt/ if you are having further issues installing PyQt5.
 
