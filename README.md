@@ -36,4 +36,5 @@ The Ph and ORP values are being written to a .txt file every 5 minutes.
 
 The Save feature will save the current sheet to a .txt file, then to load it use the Load feature click the .txt File you would like to load then click reset.
 
+Developed By: Ben Nachmanson and Victor Lobanov
 
