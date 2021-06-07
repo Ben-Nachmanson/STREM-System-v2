@@ -573,7 +573,7 @@ if __name__ == "__main__":
     # time.sleep(1.2)
     # splash.close()
     # # **********************************************
-    main.Stepper(200, "in")
+    #main.Stepper(200, "in")
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
