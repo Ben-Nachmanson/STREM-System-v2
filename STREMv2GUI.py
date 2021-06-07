@@ -500,13 +500,16 @@ class Ui_MainWindow(object):
         fileName = QtWidgets.QFileDialog.getOpenFileName(
             None, "Loading...", "", "Text files(*.txt)")
         path = fileName[0]
+        fileList = []
         if(path != ''):
             with open(path, "r") as file:
-                print(file.readlines())
+                fileList = file.readlines()
+        for item in fileList:
+            print(item)
 
     def SaveDialogBox(self):
         fileName = QtWidgets.QFileDialog.getSaveFileName(
-            None, "Saving...", "", "Text files(*.txt)")
+            None, "Save", "", "Text files(*.txt)")
         path = fileName[0]
         i = 0
         if(path != ''):
@@ -515,7 +518,7 @@ class Ui_MainWindow(object):
 
                     file.write(str(step["stage"]) + "\n")
                     file.write(str(step["stage mode"]) + "\n")
-                    file.write(str(step["time"]) + "\n\n")
+                    file.write(str(step["time"]) + "\n")
 
 
 if __name__ == "__main__":
