@@ -5,7 +5,9 @@
 Python script for a lab experiment.
 
 Necessary Packages:
+
 Python 3
+
 https://www.python.org/downloads/
 
 PyQt5
