@@ -342,7 +342,7 @@ class Ui_MainWindow(object):
             self.startStageTextEdit.setPlainText(str(self.currentStage+1))
 
         # setting text to label
-        self.TimeTextBrowser.setText(str(self.count))
+        # self.TimeTextBrowser.setText(str(self.count))
 
         # resets all cell color backgrounds in table back to white.
         for row in range(self.tableWidget.rowCount()):
@@ -557,23 +557,23 @@ class Ui_MainWindow(object):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    # # Splash Screen********************************
-    # splash_pix = QtGui.QPixmap('SplashScreen.png')
-    # splash = QtWidgets.QSplashScreen(
-    #     splash_pix, QtCore.Qt.WindowStaysOnTopHint)
-    # # add fade to splashscreen
-    # opaqueness = 0.0
-    # step = 0.03
-    # splash.setWindowOpacity(opaqueness)
-    # splash.show()
-    # while opaqueness < 1:
-    #     splash.setWindowOpacity(opaqueness)
-    #     time.sleep(step)  # Sleep for 3 seconds
-    #     opaqueness += (2*step)
-    # time.sleep(1.2)
-    # splash.close()
-    # # **********************************************
-    main.Stepper(200, "in")
+    # Splash Screen********************************
+    splash_pix = QtGui.QPixmap('SplashScreen.png')
+    splash = QtWidgets.QSplashScreen(
+        splash_pix, QtCore.Qt.WindowStaysOnTopHint)
+    # add fade to splashscreen
+    opaqueness = 0.0
+    step = 0.03
+    splash.setWindowOpacity(opaqueness)
+    splash.show()
+    while opaqueness < 1:
+        splash.setWindowOpacity(opaqueness)
+        time.sleep(step)  # Sleep for 3 seconds
+        opaqueness += (2*step)
+    time.sleep(1.2)
+    splash.close()
+    # **********************************************
+    #main.Stepper(200, "in")
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
