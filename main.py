@@ -1,5 +1,6 @@
 import time
 from timeit import default_timer as timer
+from PyQt5 import QtCore
 # import Hardware
 
 """
@@ -12,28 +13,28 @@ from timeit import default_timer as timer
 # IMPORTANT: IF THERE IS NO Stage just set "stage": NONE , "stage mode" = NONE, "time " = NONE
 stages = [{
     "stage": 1,
-    "stage mode": "n2",
-    "time": 50
+    "stage mode": "influent",
+    "time": 20
 },
     {
     "stage": 2,
-    "stage mode": "air",
-    "time": 100
+    "stage mode": "effluent",
+    "time": 21
 },
     {
     "stage": 3,
-    "stage mode": "n2",
-    "time": 144
+    "stage mode": "fermenter",
+    "time": 34
 },
     {
     "stage": 4,
     "stage mode": "still",
-    "time": 122
+    "time": 1
 },
     {
     "stage": 5,
     "stage mode": "still",
-    "time": 1332
+    "time": 1
 },
     {
     "stage": 6,
@@ -44,18 +45,18 @@ stages = [{
 
     "stage": 7,
     "stage mode": "effluent",
-    "time": 233
+    "time": 20
 }, {
 
     "stage": 8,
     "stage mode": "influent",
-    "time": 1000
+    "time": 11
 },
     {
 
     "stage": 9,
     "stage mode": "effluent",
-    "time": 1111
+    "time": 22
 },
     {
 
@@ -135,24 +136,18 @@ def TotalTime(startStage):
 
 
 def Stepper(secondsDuration, inOut):
-    start = timer()
-
-    print("Stepper duration", secondsDuration,
-          " direction ", inOut, " starting time:", start)
 
     if inOut == "in":
         # StepPins = Stepper1Pins
-
         pass
     elif inOut == "out":
         # StepPins = Stepper2Pins
-
         pass
     else:
        # StepPins = Stepper3Pins
-
         pass
 
+    start = timer()
     # Variable Declarations.
     StepCount = len(Seq)
     StepDir = 1  # Set to 1  for clockwise, -1  for anti-clockwise
@@ -172,7 +167,7 @@ def Stepper(secondsDuration, inOut):
                 # xpin.off()
                 pass
 
-        StepCounter += StepDir
+        StepCounter += StepDir  # Plus 1 or Minus 1
         print("Next Line:", StepCounter)
 
         if (StepCounter >= StepCount):
@@ -181,14 +176,13 @@ def Stepper(secondsDuration, inOut):
             StepCounter = StepCount+StepDir
 
         time.sleep(waitTime)
-        # find how long it has been running
         end = timer()
-        timeRunningSeconds = end - start
-        print("duration in stepper:", timeRunningSeconds)
+        timeRunningSeconds = end-start
+
+        # find how long it has been running
 
         if timeRunningSeconds > secondsDuration:
             break
-
 
 # def Still(secondsDuration):
 #     print("Resting for ", secondsDuration)
@@ -210,17 +204,21 @@ def TurnOnStage(stageMode):
         print("fermN2 on")
         pass
     elif(stageMode == "influent"):
-        # Stepper(in)
+        # in
+        # StepPins = Stepper1Pins
+
         print("influent on")
 
         pass
     elif(stageMode == "effluent"):
-        # Stepper(out)
+        # out
+        # StepPins = Stepper2Pins
         print("effluent on")
 
         pass
     elif(stageMode == "fermenter"):
-        #  Stepper(None)
+       # none
+       # StepPins = Stepper3Pins
         print("fermenter on")
 
         pass
@@ -249,17 +247,30 @@ def TurnOffStage(stageMode):
         print("fermN2 off")
         pass
     elif(stageMode == "influent"):
-        # Stepper(in)
+        # turn off
+        for pin in range(0, 1):
+            # xpin = Stepper1Pins[pin]
+            # xpin.off()
+            pass
+
         print("influent off")
 
         pass
     elif(stageMode == "effluent"):
-        # Stepper(out)
+        # turn off
+        for pin in range(0, 1):
+            # xpin = Stepper2Pins[pin]
+            # xpin.off()
+            pass
         print("effluent off")
 
         pass
     elif(stageMode == "fermenter"):
-        #  Stepper(None)
+        # turn off
+        for pin in range(0, 1):
+            # xpin = Stepper3Pins[pin]
+            # xpin.off()
+            pass
         print("fermenter off")
 
         pass
@@ -273,50 +284,44 @@ def TurnOffStage(stageMode):
         pass
 
 
-# def RunCycle():
-#     # step -> {"stage": int, "_" = int}
+def RunCycle():
+    # step -> {"stage": int, "_" = int}
 
-#     for step in stages:
-#         print("stage:", step["stage"])
+    for step in stages:
+        print("stage:", step["stage"])
 
-#         if step["stage mode"] == "n2":
-#             N2(step["time"])
+        if step["stage mode"] == "n2":
+            N2(step["time"])
 
-#         elif step["stage mode"] == "air":
-#             Air(step["time"])
+        elif step["stage mode"] == "air":
+            Air(step["time"])
 
-#         elif step["stage mode"] == "fermN2":
-#             FermN2(step["time"])
+        elif step["stage mode"] == "fermN2":
+            FermN2(step["time"])
 
-#         elif step["stage mode"] == "influent":
-#             Stepper(step["time"], "in")
+        elif step["stage mode"] == "influent":
+            Stepper(step["time"], "in")
 
-#             # turn off
-#             for pin in range(0, 1):
-#                 # xpin = Stepper1Pins[pin]
-#                 # xpin.off()
-#                 pass
+            # turn off
+            for pin in range(0, 1):
+                # xpin = Stepper1Pins[pin]
+                # xpin.off()
+                pass
 
-#         elif step["stage mode"] == "still":
-#             Still(step["time"])
+        elif step["stage mode"] == "still":
+            Still(step["time"])
 
-#         elif step["stage mode"] == "effluent":
-#             Stepper(step["time"], "out")
+        elif step["stage mode"] == "effluent":
+            Stepper(step["time"], "out")
 
-#             # turn off
-#             for pin in range(0, 1):
-#                 # xpin = Stepper2Pins[pin]
-#                 # xpin.off()
-#                 pass
+            # turn off
+            for pin in range(0, 1):
+                # xpin = Stepper2Pins[pin]
+                # xpin.off()
+                pass
 
-#         elif step["stage mode"] == "fermenter":
-#             Stepper(step["time"], None)
+        elif step["stage mode"] == "fermenter":
+            Stepper(step["time"], None)
 
-#             # turn off
-#             for pin in range(0, 1):
-#                 # xpin = Stepper3Pins[pin]
-#                 # xpin.off()
-#                 pass
-
-#         else:
-#             print("error", print(step))
+        else:
+            print("error", print(step))
