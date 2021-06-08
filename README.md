@@ -1,6 +1,6 @@
 # STREM-System-v2
 
-## !!!Rasberry Pi needs to be integrated and Stepper needs to be implemented.
+## !!!Rasberry Pi needs to be integrated.
 
 Python script for a lab experiment.
 
