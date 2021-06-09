@@ -14,49 +14,49 @@ from PyQt5 import QtCore
 stages = [{
     "stage": 1,
     "stage mode": "influent",
-    "time": 20
+    "time": 2
 },
     {
     "stage": 2,
     "stage mode": "effluent",
-    "time": 21
+    "time": 4
 },
     {
     "stage": 3,
-    "stage mode": "fermenter",
-    "time": 34
+    "stage mode": "still",
+    "time": 5
 },
     {
     "stage": 4,
-    "stage mode": "still",
-    "time": 1
+    "stage mode": "air",
+    "time": 4
 },
     {
-    "stage": 5,
-    "stage mode": "still",
-    "time": 1
+    "stage": None,
+    "stage mode": None,
+    "time": None
 },
     {
-    "stage": 6,
-    "stage mode": "still",
-    "time": 1
+    "stage": None,
+    "stage mode": None,
+    "time": None
 },
     {
 
-    "stage": 7,
-    "stage mode": "effluent",
-    "time": 20
+    "stage": None,
+    "stage mode": None,
+    "time": None
 }, {
 
-    "stage": 8,
-    "stage mode": "influent",
-    "time": 11
+    "stage": None,
+    "stage mode": None,
+    "time": None
 },
     {
 
-    "stage": 9,
-    "stage mode": "effluent",
-    "time": 22
+    "stage": None,
+    "stage mode": None,
+    "time": None
 },
     {
 
@@ -89,6 +89,8 @@ Seq = [[1, 0]]
 
 # Define pin functions
 
+# Calculates List Length til None is met
+
 
 def ListLength():
     i = 0
@@ -97,6 +99,8 @@ def ListLength():
             break
         i += 1
     return i
+
+# Calculates Total Time in current stages
 
 
 def TotalTime(startStage):
@@ -107,86 +111,10 @@ def TotalTime(startStage):
                 sum = sum + step["time"]
         except:
             break
-            pass
             # if None it just goes here.
     return sum
 
-
-# def N2(onOrOff):
-#     if(onOrOff == "on"):
-#         # RELAY_12.on()
-#         pass
-#     elif(onOrOff == "off"):
-#         # RELAY_12.off()
-#         pass
-
-
-# def Air(secondsDuration):
-#     print("air turned on for ", secondsDuration)
-#     # RELAY_13.on()
-#     time.sleep(secondsDuration)
-#     # RELAY_13.off()
-
-
-# def FermN2(secondsDuration):
-#     print("N2 for anaerobic fermenter turned on for ", secondsDuration)
-#     # RELAY_14.on()
-#     time.sleep(secondsDuration)
-#     # RELAY_14.off()
-
-
-def Stepper(secondsDuration, inOut):
-
-    if inOut == "in":
-        # StepPins = Stepper1Pins
-        pass
-    elif inOut == "out":
-        # StepPins = Stepper2Pins
-        pass
-    else:
-       # StepPins = Stepper3Pins
-        pass
-
-    start = timer()
-    # Variable Declarations.
-    StepCount = len(Seq)
-    StepDir = 1  # Set to 1  for clockwise, -1  for anti-clockwise
-    waitTime = 10
-    StepCounter = 0
-
-    while True:
-
-        #print("step counter:", StepCounter, " line:", Seq[StepCounter])
-        for pin in range(0, 1):
-            # xpin = StepPins[pin]
-            pass
-            if Seq[StepCounter][pin] != 0:
-                # xpin.on()
-                pass
-            else:
-                # xpin.off()
-                pass
-
-        StepCounter += StepDir  # Plus 1 or Minus 1
-        print("Next Line:", StepCounter)
-
-        if (StepCounter >= StepCount):
-            StepCounter = 0
-        if (StepCounter < 0):
-            StepCounter = StepCount+StepDir
-
-        time.sleep(waitTime)
-        end = timer()
-        timeRunningSeconds = end-start
-
-        # find how long it has been running
-
-        if timeRunningSeconds > secondsDuration:
-            break
-
-# def Still(secondsDuration):
-#     print("Resting for ", secondsDuration)
-#     time.sleep(secondsDuration)
+# Checks which stage and turns it on
 
 
 def TurnOnStage(stageMode):
@@ -230,6 +158,8 @@ def TurnOnStage(stageMode):
     else:
         # Error
         pass
+
+# Checks which stage and turns it off
 
 
 def TurnOffStage(stageMode):
@@ -282,46 +212,3 @@ def TurnOffStage(stageMode):
     else:
         # Error
         pass
-
-
-def RunCycle():
-    # step -> {"stage": int, "_" = int}
-
-    for step in stages:
-        print("stage:", step["stage"])
-
-        if step["stage mode"] == "n2":
-            N2(step["time"])
-
-        elif step["stage mode"] == "air":
-            Air(step["time"])
-
-        elif step["stage mode"] == "fermN2":
-            FermN2(step["time"])
-
-        elif step["stage mode"] == "influent":
-            Stepper(step["time"], "in")
-
-            # turn off
-            for pin in range(0, 1):
-                # xpin = Stepper1Pins[pin]
-                # xpin.off()
-                pass
-
-        elif step["stage mode"] == "still":
-            Still(step["time"])
-
-        elif step["stage mode"] == "effluent":
-            Stepper(step["time"], "out")
-
-            # turn off
-            for pin in range(0, 1):
-                # xpin = Stepper2Pins[pin]
-                # xpin.off()
-                pass
-
-        elif step["stage mode"] == "fermenter":
-            Stepper(step["time"], None)
-
-        else:
-            print("error", print(step))

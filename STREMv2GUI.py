@@ -17,7 +17,7 @@ import time
 
 
 class Ui_MainWindow(object):
-    # UI naming and positioning
+    # UI Initialization
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(890, 516)
@@ -144,9 +144,9 @@ class Ui_MainWindow(object):
         self.PauseButton = QtWidgets.QPushButton(self.centralwidget)
         self.PauseButton.setObjectName("PauseButton")
         self.gridLayout.addWidget(self.PauseButton, 5, 4, 1, 2)
-        self.reset = QtWidgets.QPushButton(self.centralwidget)
-        self.reset.setObjectName("reset")
-        self.gridLayout.addWidget(self.reset, 6, 2, 1, 1)
+        self.resetButton = QtWidgets.QPushButton(self.centralwidget)
+        self.resetButton.setObjectName("reset")
+        self.gridLayout.addWidget(self.resetButton, 6, 2, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 890, 22))
@@ -169,18 +169,16 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     # Setting text and naming
-
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "STREM-System-V2"))
+        MainWindow.setWindowIcon(QtGui.QIcon('icon.ico'))
         self.phLabel.setText(_translate("MainWindow", "pH "))
         self.timerLabel.setText(
             _translate("MainWindow", "Timer"))
         self.orpTextBrowser.setPlaceholderText(
             _translate("MainWindow", "0.00"))
         self.orpTextBrowser.setPlainText("0.000")
-        self.TimeTextBrowser.setPlaceholderText(
-            _translate("MainWindow", "0:00"))
         self.StartStageLabel.setText(_translate("MainWindow", "Start Stage"))
         self.tableWidget.setSortingEnabled(False)
         item = self.tableWidget.horizontalHeaderItem(0)
@@ -190,7 +188,6 @@ class Ui_MainWindow(object):
         item = self.tableWidget.horizontalHeaderItem(2)
         item.setText(_translate("MainWindow", "Duration (s)"))
         self.orpLabel.setText(_translate("MainWindow", "ORP"))
-        self.phTextBrowser.setPlaceholderText(_translate("MainWindow", "0.00"))
         self.phTextBrowser.setPlainText("0.000")
         self.startStageTextEdit.setPlaceholderText(
             _translate("MainWindow", "1"))
@@ -207,16 +204,17 @@ class Ui_MainWindow(object):
 
         # -------------- Pause Button Click Event-------------------
         self.PauseButton.clicked.connect(self.Pause)
+        self.PauseButton.setEnabled(False)
         # ----------------------------------------------------------
 
-        self.reset.setText(_translate("MainWindow", "Reset"))
+        self.resetButton.setText(_translate("MainWindow", "Reset"))
 
         # -------------- Reset Button Click Event-------------------
-        self.reset.clicked.connect(self.ResetButtonClicked)
+        self.resetButton.clicked.connect(self.ResetButtonClicked)
         # ----------------------------------------------------------
 
         # https://www.geeksforgeeks.org/pyqt5-digital-stopwatch/
-        # -------------- Initialize Timer ---------------
+        # -------------- Initialize CountDown Timer ---------------
         timer = QtCore.QTimer(MainWindow)
         timer.setTimerType(QtCore.Qt.PreciseTimer)
         self.count = main.TotalTime(1)
@@ -224,7 +222,7 @@ class Ui_MainWindow(object):
         self.flag = False
         timer.start(1000)
 
-        # Timer Events -- functions constantly get checked when timer is running.
+        # Countdown Timer Events -- functions constantly get checked when timer is running.
         timer.timeout.connect(self.ShowTime)
         timer.timeout.connect(self.HighlightRow)
         timer.timeout.connect(self.StageTracker)
@@ -296,7 +294,10 @@ class Ui_MainWindow(object):
             main.stages[self.currentStage]["stage mode"])
         self.StepperCheckOn()
 
+        self.tableWidget.setEnabled(False)
         self.startButton.setEnabled(False)
+        self.PauseButton.setEnabled(True)
+        self.startStageTextEdit.setEnabled(False)
 
     def Pause(self):
         # making flag to False
@@ -304,8 +305,10 @@ class Ui_MainWindow(object):
         self.stepperTimerFlag = False
 
         main.TurnOffStage(main.stages[self.currentStage]["stage mode"])
-        self.StepperCheckOff()
+        self.StepperCheckOff(0)
+
         self.startButton.setEnabled(True)
+        self.PauseButton.setEnabled(False)
 
     def CycleReset(self):
         if(self.count == 0):
@@ -345,6 +348,9 @@ class Ui_MainWindow(object):
         # making flag to false
         self.flag = False
         self.startButton.setEnabled(True)
+        self.PauseButton.setEnabled(False)
+        self.tableWidget.setEnabled(True)
+        self.startStageTextEdit.setEnabled(True)
 
         if(self.startStageTextEdit.toPlainText() == ''):
             self.currentStage = 0
@@ -353,14 +359,11 @@ class Ui_MainWindow(object):
         if(self.count != main.TotalTime(self.startStageTextEdit.toPlainText())):
             if(self.currentStage < len(main.stages)-1):
                 main.TurnOffStage(main.stages[self.currentStage]["stage mode"])
-                self.StepperCheckOff()
+                self.StepperCheckOff(0)
             else:
                 main.TurnOffStage(
                     main.stages[self.currentStage - 1]["stage mode"])
-                self.StepperCheckOff()
-
-        # resetting the count
-        self.count = main.TotalTime(self.startStageTextEdit.toPlainText())
+                self.StepperCheckOff(1)
 
         self.stepperCount = 0
         # resetting current stage -1 for index
@@ -370,7 +373,6 @@ class Ui_MainWindow(object):
             self.startStageTextEdit.setPlainText(str(self.currentStage+1))
 
         # setting text to label
-        # self.TimeTextBrowser.setText(str(self.count))
 
         # resets all cell color backgrounds in table back to white.
         for row in range(self.tableWidget.rowCount()):
@@ -392,20 +394,27 @@ class Ui_MainWindow(object):
             if(int(self.startStageTextEdit.toPlainText()) > main.ListLength() or int(self.startStageTextEdit.toPlainText()) <= 0):
                 self.startStageTextEdit.setPlainText('invalid')
                 self.startButton.setEnabled(False)
+                self.resetButton.setEnabled(False)
             else:
-                print("valid")
+                # print("valid")
                 self.startButton.setEnabled(True)
+                self.resetButton.setEnabled(True)
+                self.count = main.TotalTime(
+                    self.startStageTextEdit.toPlainText())
+                self.currentStage = int(
+                    self.startStageTextEdit.toPlainText())-1
 
         elif(self.startStageTextEdit.toPlainText() == ''):
-            print("empty")
             self.startButton.setEnabled(True)
+            self.resetButton.setEnabled(True)
 
         elif (self.startStageTextEdit.toPlainText() != 'invalid'):
             self.startStageTextEdit.setPlainText('invalid')
             self.startButton.setEnabled(False)
+            self.resetButton.setEnabled(False)
 
         else:
-            print("null")
+            # print("null")
             pass
 
     def LoadList(self):
@@ -420,9 +429,11 @@ class Ui_MainWindow(object):
                     i, 2, QtWidgets.QTableWidgetItem(str(item["time"])))
             i += 1
 
+        self.ResetButtonClicked()
+
     def ClearSheet(self):
         i = 0
-        while(i != 10):
+        while(i != self.tableWidget.rowCount()):
             self.tableWidget.setItem(
                 i, 0, QtWidgets.QTableWidgetItem(""))
             self.tableWidget.setItem(
@@ -453,24 +464,30 @@ class Ui_MainWindow(object):
                 if(self.tableWidget.item(row, col).text() in main.stageModes):
                     main.stages[row][itemType] = self.tableWidget.item(
                         row, col).text()
+                    self.startButton.setEnabled(True)
+                    self.resetButton.setEnabled(True)
                 else:
                     self.tableWidget.item(row, col).setText("#Name?")
                     self.startButton.setEnabled(False)
-
+                    self.resetButton.setEnabled(False)
             else:
                 if(self.tableWidget.item(row, col).text().isdigit()):
                     main.stages[row][itemType] = int(
                         self.tableWidget.item(row, col).text())
+                    self.startButton.setEnabled(True)
+                    self.resetButton.setEnabled(True)
+
                 else:
                     self.tableWidget.item(row, col).setText("#Name?")
                     self.startButton.setEnabled(False)
+                    self.resetButton.setEnabled(False)
 
     def StepperCheck(self):
 
         stepCount = len(main.Seq)
         StepDir = 1  # Set to 1  for clockwise, -1  for anti-clockwise
-        waitTime = 10 #Stepper time check interval
-        #print("StepperCount" + str(self.stepperCount))
+        waitTime = 10  # Stepper time check interval
+        # print("StepperCount" + str(self.stepperCount))
         if self.stepperTimerFlag:
             self.stepperCount += 1
 
@@ -492,8 +509,8 @@ class Ui_MainWindow(object):
                 if (self.stepCounter < 0):
                     self.stepCounter = stepCount+StepDir
 
-    def StepperCheckOff(self):
-        if(main.stages[self.currentStage]["stage mode"] == "effluent" or main.stages[self.currentStage]["stage mode"] == "influent" or main.stages[self.currentStage]["stage mode"] == "fermenter"):
+    def StepperCheckOff(self, index):
+        if(main.stages[self.currentStage-index]["stage mode"] == "effluent" or main.stages[self.currentStage-index]["stage mode"] == "influent" or main.stages[self.currentStage-index]["stage mode"] == "fermenter"):
             self.stepperTimerFlag = False
 
     def StepperCheckOn(self):
@@ -539,7 +556,7 @@ class Ui_MainWindow(object):
             if fullCountdownTime == stageSum and stageSum == runTime:
                 main.TurnOffStage(main.stages[self.currentStage]["stage mode"])
                 # Checks if the stepper is running
-                self.StepperCheckOff()
+                self.StepperCheckOff(0)
                 self.currentStage += 1
                 if(self.currentStage < len(main.stages)-1):
                     main.TurnOnStage(
@@ -554,7 +571,7 @@ class Ui_MainWindow(object):
             # checks if the stage has gone full runtime
             elif runTime == stageSum:
                 main.TurnOffStage(main.stages[self.currentStage]["stage mode"])
-                self.StepperCheckOff()
+                self.StepperCheckOff(0)
 
                 self.currentStage += 1
                 main.TurnOnStage(
@@ -585,13 +602,19 @@ class Ui_MainWindow(object):
     def Save(self):
         print("save pressed")
         self.SaveDialogBox()
-        pass
 
     def Load(self):
         print("loadPressed")
-        self.OpenDialogBox()
-        self.ClearSheet()
-        self.LoadList()
+        try:
+            self.OpenDialogBox()
+            self.ClearSheet()
+            self.LoadList()
+            # self.currentStage = 0
+            self.startStageTextEdit.setPlainText(str(1))
+            self.count = main.TotalTime(1)
+
+        except:
+            print("file has been tampered with or is in wrong format")
 
     def OpenDialogBox(self):
         fileName = QtWidgets.QFileDialog.getOpenFileName(
@@ -657,7 +680,7 @@ if __name__ == "__main__":
     time.sleep(1.2)
     splash.close()
     # **********************************************
-    #main.Stepper(200, "in")
+    # main.Stepper(200, "in")
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
