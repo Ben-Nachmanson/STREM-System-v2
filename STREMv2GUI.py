@@ -268,7 +268,9 @@ class Ui_MainWindow(object):
         self.saveAction.triggered.connect(self.Save)
 
     # https://www.geeksforgeeks.org/pyqt5-digital-stopwatch/
+
     # *******Time Functions***********
+
     def ShowTime(self):
 
         # checking if flag is true
@@ -286,6 +288,7 @@ class Ui_MainWindow(object):
 
         # showing text
         self.TimeTextBrowser.setText(text)
+    # activated when the start button is clicked.
 
     def Start(self):
         # making flag to true
@@ -309,6 +312,7 @@ class Ui_MainWindow(object):
 
         self.startButton.setEnabled(True)
         self.PauseButton.setEnabled(False)
+    # triggered when timer reaches "00:00:00"
 
     def CycleReset(self):
         if(self.count == 0):
@@ -343,7 +347,6 @@ class Ui_MainWindow(object):
 
         # ------Interval Timer------------
     # Resets the timer/count/currentStage and sets all the cells backgrounds to white.
-
     def ResetButtonClicked(self):
         # making flag to false
         self.flag = False
@@ -385,9 +388,10 @@ class Ui_MainWindow(object):
                                       2).setBackground(QtGui.QColor(255, 255, 255))
             except:
                 pass
-    # *******Sheet Functions***********
-    # Loads stages into the gui sheet
 
+    # *******Spreadsheet Functions***********
+
+    # checks if the value entered for the start stage is "valid"
     def StartStageTextCheck(self):
         if(self.startStageTextEdit.toPlainText().isdigit()):
             # If too small or large of a digit
@@ -417,6 +421,7 @@ class Ui_MainWindow(object):
             # print("null")
             pass
 
+    # Loads the dict into the sheet.
     def LoadList(self):
         i = 0
         for item in main.stages:
@@ -431,6 +436,7 @@ class Ui_MainWindow(object):
 
         self.ResetButtonClicked()
 
+    # Empties the sheet of values.
     def ClearSheet(self):
         i = 0
         while(i != self.tableWidget.rowCount()):
@@ -442,6 +448,7 @@ class Ui_MainWindow(object):
                 i, 2, QtWidgets.QTableWidgetItem(""))
             i += 1
 
+    # Writes the the dict when the cells on sheet are changed - along with deactivating buttons.
     def UpdateCell(self):
         col = self.tableWidget.currentColumn()
         row = self.tableWidget.currentRow()
@@ -482,47 +489,9 @@ class Ui_MainWindow(object):
                     self.startButton.setEnabled(False)
                     self.resetButton.setEnabled(False)
 
-    def StepperCheck(self):
-
-        stepCount = len(main.Seq)
-        StepDir = 1  # Set to 1  for clockwise, -1  for anti-clockwise
-        waitTime = 10  # Stepper time check interval
-        # print("StepperCount" + str(self.stepperCount))
-        if self.stepperTimerFlag:
-            self.stepperCount += 1
-
-            if(self.stepperCount % waitTime == 0):
-                for pin in range(0, 1):
-                    # xpin = StepPins[pin]
-                    pass
-                    if main.Seq[self.stepCounter][pin] != 0:
-                        # xpin.on()
-                        pass
-                    else:
-                        # xpin.off()
-                        pass
-                self.stepCounter += StepDir  # Plus 1 or Minus 1
-                print("Next Line:", self.stepCounter)
-
-                if (self.stepCounter >= stepCount):
-                    self.stepCounter = 0
-                if (self.stepCounter < 0):
-                    self.stepCounter = stepCount+StepDir
-
-    def StepperCheckOff(self, index):
-        if(main.stages[self.currentStage-index]["stage mode"] == "effluent" or main.stages[self.currentStage-index]["stage mode"] == "influent" or main.stages[self.currentStage-index]["stage mode"] == "fermenter"):
-            self.stepperTimerFlag = False
-
-    def StepperCheckOn(self):
-        if(main.stages[self.currentStage]["stage mode"] == "effluent" or main.stages[self.currentStage]["stage mode"] == "influent" or main.stages[self.currentStage]["stage mode"] == "fermenter"):
-            self.stepperTimerFlag = True
-            self.stepperCount = 0
-
     # *******Stage Functions*************
-    # Keeps track of the current stage and triggering next stage.
 
-    # Will highlight the current stage to yellow
-
+    # Will highlight the current stage to yellow when clock is running
     def HighlightRow(self):
         if self.flag:
             try:
@@ -538,6 +507,7 @@ class Ui_MainWindow(object):
             except:
                 print("nothing to do")
 
+    # main logic running gui - calculates running time if clock is running
     def StageTracker(self):
 
         # countDown runtime
@@ -590,19 +560,65 @@ class Ui_MainWindow(object):
                 print("Empty")
         return sum
 
+    # *******Stepper Functions*************
+
+    # Stepper interval logic
+    def StepperCheck(self):
+
+        stepCount = len(main.Seq)
+        StepDir = 1  # Set to 1  for clockwise, -1  for anti-clockwise
+        waitTime = 10  # Stepper time check interval
+        # print("StepperCount" + str(self.stepperCount))
+        if self.stepperTimerFlag:
+            self.stepperCount += 1
+
+            if(self.stepperCount % waitTime == 0):
+                for pin in range(0, 1):
+                    # xpin = StepPins[pin]
+                    pass
+                    if main.Seq[self.stepCounter][pin] != 0:
+                        # xpin.on()
+                        pass
+                    else:
+                        # xpin.off()
+                        pass
+                self.stepCounter += StepDir  # Plus 1 or Minus 1
+                print("Next Line:", self.stepCounter)
+
+                if (self.stepCounter >= stepCount):
+                    self.stepCounter = 0
+                if (self.stepCounter < 0):
+                    self.stepCounter = stepCount+StepDir
+    # checks if the current Stage requires the stepper to be turned off
+
+    def StepperCheckOff(self, index):
+        if(main.stages[self.currentStage-index]["stage mode"] == "effluent" or main.stages[self.currentStage-index]["stage mode"] == "influent" or main.stages[self.currentStage-index]["stage mode"] == "fermenter"):
+            self.stepperTimerFlag = False
+
+    # checks if the currentStage requires the stepper to be activated.
+    def StepperCheckOn(self):
+        if(main.stages[self.currentStage]["stage mode"] == "effluent" or main.stages[self.currentStage]["stage mode"] == "influent" or main.stages[self.currentStage]["stage mode"] == "fermenter"):
+            self.stepperTimerFlag = True
+            self.stepperCount = 0
+
+    # *******Miscellaneous Functions*************
+
+    # updates ph value constantly
     def PHSetter(self):
         # put real pH reading here later
         self.phTextBrowser.setPlainText("1.22")
 
+    # Updates Orp value constantly
     def OrpSetter(self):
         # put real Orp reading here later.
         self.orpTextBrowser.setPlainText("0.22")
 
-    # Save and Load
+    # Save
     def Save(self):
         print("save pressed")
         self.SaveDialogBox()
 
+    # Loads a file and updates the startStage
     def Load(self):
         print("loadPressed")
         try:
@@ -616,6 +632,7 @@ class Ui_MainWindow(object):
         except:
             print("file has been tampered with or is in wrong format")
 
+    # opens a file and loads it into stages
     def OpenDialogBox(self):
         fileName = QtWidgets.QFileDialog.getOpenFileName(
             None, "Loading...", "", "Text files(*.txt)")
@@ -648,6 +665,7 @@ class Ui_MainWindow(object):
                 index += 1
             itemType += 1
 
+    # creates a file and saves the current stages to a .txt file
     def SaveDialogBox(self):
         fileName = QtWidgets.QFileDialog.getSaveFileName(
             None, "Save", "", "Text files(*.txt)")
