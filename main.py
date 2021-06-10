@@ -1,13 +1,19 @@
-import time
+import board
+import busio
 from timeit import default_timer as timer
 from PyQt5 import QtCore
+from gpiozero import OutputDevice
+from anyleaf import phSensor, OnBoard
+
 # import Hardware
 
 """
     Sequential Batch Reactor, 8 channel relay, anaerobic fermenter = coupled
 
 """
-from gpiozero import OutputDevice
+LOOP_DELAY = 60 * 5
+i2c = busio.I2C(board.SCL, board.SDA)
+phSensor = PhSensor(i2c, LOOP_DELAY)
 
 
 class Relay(OutputDevice):
@@ -219,3 +225,8 @@ def TurnOffStage(stageMode):
     else:
         # Error
         pass
+
+
+def ReadPh():
+    ph = phSensor.read(OnBoard())
+    return ph
