@@ -7,19 +7,26 @@ from PyQt5 import QtCore
     Sequential Batch Reactor, 8 channel relay, anaerobic fermenter = coupled
 
 """
+from gpiozero import OutputDevice
+
+
+class Relay(OutputDevice):
+    def __init__(self, pin, active_high):
+        super(Relay, self).__init__(pin, active_high)
+
 
 # Default starting stages with MAX = 10 stages
 # This is basically the spreadsheet. index = rows(1-10), (stage,stage mode, time) = cols(1,2,3)
 # IMPORTANT: IF THERE IS NO Stage just set "stage": NONE , "stage mode" = NONE, "time " = NONE
 stages = [{
     "stage": 1,
-    "stage mode": "influent",
-    "time": 2
+    "stage mode": "air",
+    "time": 20
 },
     {
     "stage": 2,
-    "stage mode": "effluent",
-    "time": 4
+    "stage mode": "n2",
+    "time": 15
 },
     {
     "stage": 3,
@@ -69,8 +76,8 @@ stages = [{
 stageModes = ["n2", "air", "fermN2", "influent",
               "effluent", "fermenter", "still"]
 # Relay1
-# RELAY_12 = Hardware.Relay(12, False)  # n2
-# RELAY_13 = Hardware.Relay(13, False)  # air
+RELAY_n2 = Relay(6, False)  # n2
+RELAY_air = Relay(26, False)  # air
 # RELAY_14 = Hardware.Relay(1, False)  # fermenter_n2
 
 # ph_sensor = PHSensor(....)
@@ -119,12 +126,12 @@ def TotalTime(startStage):
 
 def TurnOnStage(stageMode):
     if(stageMode == "n2"):
-        # RELAY_12.on()
+        RELAY_n2.on()
         print("n2 on")
         pass
 
     elif(stageMode == "air"):
-        # RELAY_13.on()
+        RELAY_air.on()
         print("air on")
         pass
     elif(stageMode == "fermN2"):
@@ -164,12 +171,12 @@ def TurnOnStage(stageMode):
 
 def TurnOffStage(stageMode):
     if(stageMode == "n2"):
-        # RELAY_12.off()
+        RELAY_n2.on()
         print("n2 off")
         pass
 
     elif(stageMode == "air"):
-        # RELAY_13.off()
+        RELAY_air.on()
         print("air off")
         pass
     elif(stageMode == "fermN2"):
