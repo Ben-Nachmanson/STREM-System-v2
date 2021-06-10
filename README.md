@@ -27,16 +27,11 @@ To run the application compile this file.
 > STREMv2GUI.py
 
 
-
-When using the application check that all inputs (Sheet & StartStage) do not have error messages then click reset everytime before the Start button is clicked.
-
-When changing the Start Stage value just write the number and click reset. You will get errors otherwise.
-
 The cycle will loop endlessly unless the "Reset" button is clicked, and it will halt at the current state when "Pause" is clicked.
 
 The Ph and ORP values are being written to a .txt file every 5 minutes and will be constantly updating regardless of the state.
 
-The Save feature will save the current sheet to a .txt file, then to load it use the Load feature click the .txt File you would like to load then click reset.
+The Save feature will save the current sheet to a .txt file, to load open a previously saved .txt sheet using the "load" feature.
 
 Developed By: Ben Nachmanson and Victor Lobanov
 
