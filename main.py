@@ -3,7 +3,7 @@ import busio
 from timeit import default_timer as timer
 from PyQt5 import QtCore
 from gpiozero import OutputDevice
-from anyleaf import phSensor, OnBoard
+from anyleaf import PhSensor, OnBoard
 
 # import Hardware
 
@@ -82,8 +82,8 @@ stages = [{
 stageModes = ["n2", "air", "fermN2", "influent",
               "effluent", "fermenter", "still"]
 # Relay1
-RELAY_n2 = Relay(6, False)  # n2
-RELAY_air = Relay(26, False)  # air
+#RELAY_n2 = Relay(6, False)  # n2
+#RELAY_air = Relay(26, False)  # air
 # RELAY_14 = Hardware.Relay(1, False)  # fermenter_n2
 
 # ph_sensor = PHSensor(....)
