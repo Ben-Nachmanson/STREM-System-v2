@@ -606,12 +606,12 @@ class Ui_MainWindow(object):
     # updates ph value constantly
     def PHSetter(self):
         # put real pH reading here later
-        self.phTextBrowser.setPlainText(str(main.ReadPh()))
+        self.phTextBrowser.setPlainText(str(main.ReadPh()).ljust(5)[:5])
 
     # Updates Orp value constantly
     def OrpSetter(self):
         # put real Orp reading here later.
-        self.orpTextBrowser.setPlainText("0.22")
+        self.orpTextBrowser.setPlainText(str(main.ReadOrp()).ljust(5)[:5])
 
     # Save
     def Save(self):

@@ -1,9 +1,11 @@
+import threading
 import board
 import busio
 from timeit import default_timer as timer
 from PyQt5 import QtCore
+from threading import Thread
 from gpiozero import OutputDevice
-from anyleaf import PhSensor, OnBoard
+from anyleaf import CalPt, PhSensor, OnBoard, OrpSensor
 
 # import Hardware
 
@@ -11,9 +13,11 @@ from anyleaf import PhSensor, OnBoard
     Sequential Batch Reactor, 8 channel relay, anaerobic fermenter = coupled
 
 """
-LOOP_DELAY = 60 * 5
 i2c = busio.I2C(board.SCL, board.SDA)
-phSensor = PhSensor(i2c, LOOP_DELAY)
+phSensor = PhSensor(i2c, 0)
+phSensor.calibrate_all(
+    CalPt(0., 7., 25.), CalPt(0.18, 4., 25.)
+)
 
 
 class Relay(OutputDevice):
@@ -82,8 +86,8 @@ stages = [{
 stageModes = ["n2", "air", "fermN2", "influent",
               "effluent", "fermenter", "still"]
 # Relay1
-#RELAY_n2 = Relay(6, False)  # n2
-#RELAY_air = Relay(26, False)  # air
+# RELAY_n2 = Relay(6, False)  # n2
+# RELAY_air = Relay(26, False)  # air
 # RELAY_14 = Hardware.Relay(1, False)  # fermenter_n2
 
 # ph_sensor = PHSensor(....)
@@ -132,12 +136,12 @@ def TotalTime(startStage):
 
 def TurnOnStage(stageMode):
     if(stageMode == "n2"):
-        RELAY_n2.on()
+        # RELAY_n2.on()
         print("n2 on")
         pass
 
     elif(stageMode == "air"):
-        RELAY_air.on()
+        # RELAY_air.on()
         print("air on")
         pass
     elif(stageMode == "fermN2"):
@@ -177,12 +181,12 @@ def TurnOnStage(stageMode):
 
 def TurnOffStage(stageMode):
     if(stageMode == "n2"):
-        RELAY_n2.on()
+        # RELAY_n2.off()
         print("n2 off")
         pass
 
     elif(stageMode == "air"):
-        RELAY_air.on()
+        # RELAY_air.off()
         print("air off")
         pass
     elif(stageMode == "fermN2"):
@@ -228,5 +232,8 @@ def TurnOffStage(stageMode):
 
 
 def ReadPh():
-    ph = phSensor.read(OnBoard())
-    return ph
+    return phSensor.read(OnBoard())
+
+
+def ReadOrp():
+    return "0.00"
