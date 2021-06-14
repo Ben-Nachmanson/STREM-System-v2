@@ -436,7 +436,24 @@ class Ui_MainWindow(object):
 
         self.ResetButtonClicked()
 
+    def CheckCells(self):
+        for row in range(self.tableWidget.rowCount()):
+            try:
+                if(self.tableWidget.item(row, 0).text() == "#Name?" or self.tableWidget.item(row, 1).text() == "#Name?" or self.tableWidget.item(row, 2).text() == "#Name?"):
+                    self.startButton.setEnabled(False)
+                    self.resetButton.setEnabled(False)
+                    self.PauseButton.setEnabled(False)
+                    self.startStageTextEdit.setEnabled(False)
+                    break
+                else:
+                    self.startButton.setEnabled(True)
+                    self.resetButton.setEnabled(True)
+                    self.startStageTextEdit.setEnabled(True)
+            except:
+                pass
+
     # Empties the sheet of values.
+
     def ClearSheet(self):
         i = 0
         while(i != self.tableWidget.rowCount()):
@@ -471,23 +488,15 @@ class Ui_MainWindow(object):
                 if(self.tableWidget.item(row, col).text() in main.stageModes):
                     main.stages[row][itemType] = self.tableWidget.item(
                         row, col).text()
-                    self.startButton.setEnabled(True)
-                    self.resetButton.setEnabled(True)
                 else:
                     self.tableWidget.item(row, col).setText("#Name?")
-                    self.startButton.setEnabled(False)
-                    self.resetButton.setEnabled(False)
             else:
                 if(self.tableWidget.item(row, col).text().isdigit()):
                     main.stages[row][itemType] = int(
                         self.tableWidget.item(row, col).text())
-                    self.startButton.setEnabled(True)
-                    self.resetButton.setEnabled(True)
-
                 else:
                     self.tableWidget.item(row, col).setText("#Name?")
-                    self.startButton.setEnabled(False)
-                    self.resetButton.setEnabled(False)
+        self.CheckCells()
 
     # *******Stage Functions*************
 
@@ -606,12 +615,15 @@ class Ui_MainWindow(object):
     # updates ph value constantly
     def PHSetter(self):
         # put real pH reading here later
-        self.phTextBrowser.setPlainText(str(main.ReadPh()).ljust(5)[:5])
+        # self.phTextBrowser.setPlainText(str(main.ReadPh()).ljust(5)[:5])
+        self.phTextBrowser.setPlainText(str("0.00"))
 
     # Updates Orp value constantly
+
     def OrpSetter(self):
         # put real Orp reading here later.
-        self.orpTextBrowser.setPlainText(str(main.ReadOrp()).ljust(5)[:5])
+        # self.orpTextBrowser.setPlainText(str(main.ReadOrp()).ljust(5)[:5])
+        self.orpTextBrowser.setPlainText(str("0.00"))
 
     # Save
     def Save(self):
@@ -664,8 +676,8 @@ class Ui_MainWindow(object):
                     main.stages[index]["time"] = None
                 index += 1
             itemType += 1
-
     # creates a file and saves the current stages to a .txt file
+
     def SaveDialogBox(self):
         fileName = QtWidgets.QFileDialog.getSaveFileName(
             None, "Save", "", "Text files(*.txt)")
@@ -683,20 +695,20 @@ class Ui_MainWindow(object):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     # Splash Screen********************************
-    splash_pix = QtGui.QPixmap('SplashScreen.png')
-    splash = QtWidgets.QSplashScreen(
-        splash_pix, QtCore.Qt.WindowStaysOnTopHint)
-    # add fade to splashscreen
-    opaqueness = 0.0
-    step = 0.03
-    splash.setWindowOpacity(opaqueness)
-    splash.show()
-    while opaqueness < 1:
-        splash.setWindowOpacity(opaqueness)
-        time.sleep(step)  # Sleep for 3 seconds
-        opaqueness += (2*step)
-    time.sleep(1.2)
-    splash.close()
+    # splash_pix = QtGui.QPixmap('SplashScreen.png')
+    # splash = QtWidgets.QSplashScreen(
+    #     splash_pix, QtCore.Qt.WindowStaysOnTopHint)
+    # # add fade to splashscreen
+    # opaqueness = 0.0
+    # step = 0.03
+    # splash.setWindowOpacity(opaqueness)
+    # splash.show()
+    # while opaqueness < 1:
+    #     splash.setWindowOpacity(opaqueness)
+    #     time.sleep(step)  # Sleep for 3 seconds
+    #     opaqueness += (2*step)
+    # time.sleep(1.2)
+    # splash.close()
     # **********************************************
     # main.Stepper(200, "in")
     MainWindow = QtWidgets.QMainWindow()
