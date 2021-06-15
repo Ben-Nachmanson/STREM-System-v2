@@ -1,10 +1,10 @@
 import threading
-#import board
-#import busio
+import board
+import busio
 from timeit import default_timer as timer
 from PyQt5 import QtCore
 from threading import Thread
-#from gpiozero import OutputDevice
+from gpiozero import OutputDevice
 from anyleaf import CalPt, PhSensor, OnBoard, OrpSensor
 
 # import Hardware
@@ -13,16 +13,16 @@ from anyleaf import CalPt, PhSensor, OnBoard, OrpSensor
     Sequential Batch Reactor, 8 channel relay, anaerobic fermenter = coupled
 
 """
-# i2c = busio.I2C(board.SCL, board.SDA)
-# phSensor = PhSensor(i2c, 0)
-# phSensor.calibrate_all(
-#     CalPt(0., 7., 25.), CalPt(0.18, 4., 25.)
-# )
+i2c = busio.I2C(board.SCL, board.SDA)
+phSensor = PhSensor(i2c, 0)
+phSensor.calibrate_all(
+    CalPt(0., 7., 25.), CalPt(0.18, 4., 25.)
+)
 
 
-# class Relay(OutputDevice):
-#     def __init__(self, pin, active_high):
-#         super(Relay, self).__init__(pin, active_high)
+class Relay(OutputDevice):
+    def __init__(self, pin, active_high):
+        super(Relay, self).__init__(pin, active_high)
 
 
 # Default starting stages with MAX = 10 stages
@@ -231,9 +231,9 @@ def TurnOffStage(stageMode):
         pass
 
 
-# def ReadPh():
-#     return phSensor.read(OnBoard())
+def ReadPh():
+    return phSensor.read(OnBoard())
 
 
-# def ReadOrp():
-#     return "0.00"
+def ReadOrp():
+    return "0.00"

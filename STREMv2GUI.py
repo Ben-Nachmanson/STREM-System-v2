@@ -615,15 +615,15 @@ class Ui_MainWindow(object):
     # updates ph value constantly
     def PHSetter(self):
         # put real pH reading here later
-        # self.phTextBrowser.setPlainText(str(main.ReadPh()).ljust(5)[:5])
-        self.phTextBrowser.setPlainText(str("0.00"))
+        self.phTextBrowser.setPlainText(str(main.ReadPh()).ljust(5)[:5])
+        # self.phTextBrowser.setPlainText(str("0.00"))
 
     # Updates Orp value constantly
 
     def OrpSetter(self):
         # put real Orp reading here later.
-        # self.orpTextBrowser.setPlainText(str(main.ReadOrp()).ljust(5)[:5])
-        self.orpTextBrowser.setPlainText(str("0.00"))
+        self.orpTextBrowser.setPlainText(str(main.ReadOrp()).ljust(5)[:5])
+        # self.orpTextBrowser.setPlainText(str("0.00"))
 
     # Save
     def Save(self):
@@ -637,7 +637,6 @@ class Ui_MainWindow(object):
             self.OpenDialogBox()
             self.ClearSheet()
             self.LoadList()
-            # self.currentStage = 0
             self.startStageTextEdit.setPlainText(str(1))
             self.count = main.TotalTime(1)
 
@@ -695,20 +694,20 @@ class Ui_MainWindow(object):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     # Splash Screen********************************
-    # splash_pix = QtGui.QPixmap('SplashScreen.png')
-    # splash = QtWidgets.QSplashScreen(
-    #     splash_pix, QtCore.Qt.WindowStaysOnTopHint)
-    # # add fade to splashscreen
-    # opaqueness = 0.0
-    # step = 0.03
-    # splash.setWindowOpacity(opaqueness)
-    # splash.show()
-    # while opaqueness < 1:
-    #     splash.setWindowOpacity(opaqueness)
-    #     time.sleep(step)  # Sleep for 3 seconds
-    #     opaqueness += (2*step)
-    # time.sleep(1.2)
-    # splash.close()
+    splash_pix = QtGui.QPixmap('SplashScreen.png')
+    splash = QtWidgets.QSplashScreen(
+        splash_pix, QtCore.Qt.WindowStaysOnTopHint)
+    # add fade to splashscreen
+    opaqueness = 0.0
+    step = 0.03
+    splash.setWindowOpacity(opaqueness)
+    splash.show()
+    while opaqueness < 1:
+        splash.setWindowOpacity(opaqueness)
+        time.sleep(step)  # Sleep for 3 seconds
+        opaqueness += (2*step)
+    time.sleep(1.2)
+    splash.close()
     # **********************************************
     # main.Stepper(200, "in")
     MainWindow = QtWidgets.QMainWindow()
