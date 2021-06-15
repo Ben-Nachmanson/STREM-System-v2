@@ -448,7 +448,6 @@ class Ui_MainWindow(object):
                 else:
                     self.startButton.setEnabled(True)
                     self.resetButton.setEnabled(True)
-                    self.startStageTextEdit.setEnabled(True)
             except:
                 pass
 

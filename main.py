@@ -98,9 +98,6 @@ IN6 = Relay(12, False)
 IN7 = Relay(16, False)
 
 
-
-
-
 # Stepper1Pins = [IN5] # Stepper 1 = influent
 # Stepper2Pins = [IN6] # Stepper 2 = effluent
 # Stepper3Pins = [IN7] # Stepper 3 = into anaero fermenter
