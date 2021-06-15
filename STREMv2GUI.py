@@ -448,6 +448,7 @@ class Ui_MainWindow(object):
                 else:
                     self.startButton.setEnabled(True)
                     self.resetButton.setEnabled(True)
+                    self.startStageTextEdit.setEnabled(True)
             except:
                 pass
 
@@ -495,7 +496,8 @@ class Ui_MainWindow(object):
                         self.tableWidget.item(row, col).text())
                 else:
                     self.tableWidget.item(row, col).setText("#Name?")
-        self.CheckCells()
+        if self.flag == False:
+            self.CheckCells()
 
     # *******Stage Functions*************
 
