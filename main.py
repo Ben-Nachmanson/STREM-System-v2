@@ -15,6 +15,7 @@ from anyleaf import CalPt, PhSensor, OnBoard, OrpSensor
 """
 i2c = busio.I2C(board.SCL, board.SDA)
 phSensor = PhSensor(i2c, 0)
+orpSensor = OrpSensor(i2c, 0, address=0x48)
 phSensor.calibrate_all(
     CalPt(0., 7., 25.), CalPt(0.18, 4., 25.)
 )
@@ -86,8 +87,8 @@ stages = [{
 stageModes = ["n2", "air", "fermN2", "influent",
               "effluent", "fermenter", "still"]
 # Relay1
-# RELAY_n2 = Relay(6, False)  # n2
-# RELAY_air = Relay(26, False)  # air
+RELAY_n2 = Relay(6, False)  # n2
+RELAY_air = Relay(26, False)  # air
 # RELAY_14 = Hardware.Relay(1, False)  # fermenter_n2
 
 # ph_sensor = PHSensor(....)
@@ -136,12 +137,12 @@ def TotalTime(startStage):
 
 def TurnOnStage(stageMode):
     if(stageMode == "n2"):
-        # RELAY_n2.on()
+        RELAY_n2.on()
         print("n2 on")
         pass
 
     elif(stageMode == "air"):
-        # RELAY_air.on()
+        RELAY_air.on()
         print("air on")
         pass
     elif(stageMode == "fermN2"):
@@ -181,12 +182,12 @@ def TurnOnStage(stageMode):
 
 def TurnOffStage(stageMode):
     if(stageMode == "n2"):
-        # RELAY_n2.off()
+        RELAY_n2.off()
         print("n2 off")
         pass
 
     elif(stageMode == "air"):
-        # RELAY_air.off()
+        RELAY_air.off()
         print("air off")
         pass
     elif(stageMode == "fermN2"):
@@ -236,4 +237,4 @@ def ReadPh():
 
 
 def ReadOrp():
-    return "0.00"
+    return orpSensor.read()
