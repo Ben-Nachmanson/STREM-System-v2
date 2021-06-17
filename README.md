@@ -1,6 +1,5 @@
 # STREM-System-v2
 
-## !!!Rasberry Pi needs to be integrated.
 
 Python script for a lab experiment.
 
@@ -12,16 +11,6 @@ https://www.python.org/downloads/
 
 PyQt5
 
-## Linux
-> sudo apt-get install python3-pyqt5
-
-## Windows
-> pip install PyQt5
-
-## Mac
-> python3 -m pip install PyQt5
-
-Please Refer to https://pythonbasics.org/install-pyqt/ if you are having further issues installing PyQt5.
 
 To run the application compile this file. 
 > STREMv2GUI.py
