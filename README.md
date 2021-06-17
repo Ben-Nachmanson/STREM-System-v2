@@ -1,7 +1,7 @@
 # STREM-System-v2
 
 
-Python script for a lab experiment.
+Python Application for a lab experiment.
 
 Necessary Packages:
 
