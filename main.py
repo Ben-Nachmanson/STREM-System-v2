@@ -26,8 +26,8 @@ class Relay(OutputDevice):
         super(Relay, self).__init__(pin, active_high)
 
 
-# Default starting stages with MAX = 10 stages
-# This is basically the spreadsheet. index = rows(1-10), (stage,stage mode, time) = cols(1,2,3)
+# Default starting stages with MAX = 20 stages
+# This is basically the spreadsheet. index = rows(1-20), (stage,stage mode, time) = cols(1,2,3)
 # IMPORTANT: IF THERE IS NO Stage just set "stage": NONE , "stage mode" = NONE, "time " = NONE
 stages = [{
     "stage": 1,
@@ -77,6 +77,57 @@ stages = [{
     "time": None
 },
     {
+
+    "stage": None,
+    "stage mode": None,
+    "time": None
+}
+,{
+
+    "stage": None,
+    "stage mode": None,
+    "time": None
+},{
+
+    "stage": None,
+    "stage mode": None,
+    "time": None
+},{
+
+    "stage": None,
+    "stage mode": None,
+    "time": None
+},{
+
+    "stage": None,
+    "stage mode": None,
+    "time": None
+},{
+
+    "stage": None,
+    "stage mode": None,
+    "time": None
+},{
+
+    "stage": None,
+    "stage mode": None,
+    "time": None
+},{
+
+    "stage": None,
+    "stage mode": None,
+    "time": None
+},{
+
+    "stage": None,
+    "stage mode": None,
+    "time": None
+},{
+
+    "stage": None,
+    "stage mode": None,
+    "time": None
+},{
 
     "stage": None,
     "stage mode": None,
