@@ -15,6 +15,7 @@ PyQt5
 To run the application compile this file. 
 > STREMv2GUI.py
 
+Scheduler
 
 The cycle will loop endlessly unless the "Reset" button is clicked, and it will halt at the current state when "Pause" is clicked.
 
